@@ -1,4 +1,7 @@
 import { Pool } from "pg";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -11,13 +14,12 @@ const pool = new Pool({
     connectionTimeoutMillis: 2000,
 });
 
-pool.connect((err, client, release) => {
-    if (err){
-        console.error('Error connecting to the database', err);
-        process.exit(1)
-    }
-    console.log('Connected to the database');
-    release();
+pool.on('connect', () => {
+    console.log('Successfully connected to the database');
 });
+
+pool.on('error', (err) => {
+    console.error('Database error', err);
+})
 
 export default pool;
