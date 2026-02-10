@@ -3,6 +3,9 @@ import express, { Request, Response } from 'express'; // Imports express and the
 import cors from 'cors'; // CORS middleware
 import helmet from 'helmet'; // Security middleware
 import pool from './database';
+import authRoutes from './routes/auth.routes';
+
+require("dotenv").config();
 
 const testDatabaseConnection = async () => {
     try {
@@ -43,7 +46,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Mount routers 
-//app.use('/', []);
+app.use('/api/auth', authRoutes);
 
 // Start the Express server
 app.listen(port, () => {
