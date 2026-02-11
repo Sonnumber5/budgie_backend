@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { AuthDAO } from '../database_access/auth.dao';
 import { RegisterDTO, loginDTO, AuthResponse } from '../types';
+import { AppError } from '../utils/AppError';
 
 export class AuthService{
     constructor(private authDAO: AuthDAO){}
@@ -12,11 +13,7 @@ export class AuthService{
         const existingUser = await this.authDAO.findUserByEmail(email);
 
         if (existingUser){
-            throw new Error('User already exists');
-        }
-
-        if (password.length < 12){
-            throw new Error('Password must be at least 12 characters');
+            throw new AppError('User already exists', 400);
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
@@ -32,17 +29,16 @@ export class AuthService{
         };
     }
 
-    async login(data: loginDTO): Promise<AuthResponse>{
-        const { email, password } = data;
+    async login(email: string, password: string): Promise<AuthResponse>{
 
         const user = await this.authDAO.findUserByEmail(email);
         if (!user){
-            throw new Error('User does not exist');
+            throw new AppError('Invalid credentials', 401);
         }
 
         const validPassword = await bcrypt.compare(password, user.password_hash);
         if (!validPassword){
-            throw new Error('Invalid credentials');
+            throw new AppError('Invalid credentials', 401);
         }
 
         const token = jwt.sign(
@@ -65,5 +61,15 @@ export class AuthService{
         }
     }
 
-
+    async getUserById(userId: number){
+        const user = await this.authDAO.findUserById(userId);
+        if (!user){
+            throw new AppError('User not found', 404);
+        }
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name
+        }
+    }
 }
