@@ -5,6 +5,7 @@ import { RegisterDTO, loginDTO, AuthResponse } from '../types';
 import { AppError } from '../utils/AppError';
 
 export class AuthService{
+    
     constructor(private authDAO: AuthDAO){}
 
     async register(data: RegisterDTO): Promise<{user: {id: number; email: string; name: string}}>{

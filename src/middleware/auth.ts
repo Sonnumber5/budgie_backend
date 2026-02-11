@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types";
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     try{
         const token = req.cookies.token;
 
@@ -16,11 +16,11 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
             name: string;
         };
 
-        req.user = decoded;
+        (req as any).user = decoded;
 
         next();
     } catch(error){
-        return res.status(403).json({ error: 'Invalud token' });
+        return res.status(403).json({ error: 'Invalid token' });
     }
 
 }

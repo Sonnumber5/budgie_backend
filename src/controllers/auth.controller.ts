@@ -3,6 +3,7 @@ import { AuthService } from "../services/auth.service";
 import { AuthRequest, User } from "../types";
 
 export class AuthController{
+
     constructor(private authService: AuthService){}
 
     register = async (req: Request, res: Response): Promise<void> => {

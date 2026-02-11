@@ -1,12 +1,17 @@
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express'; // Imports express and the Request/Response types for type safety
 import cors from 'cors'; // CORS middleware
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet'; // Security middleware
 import pool from './database';
 import { authRoutes } from './routes/auth.routes';
 import { AuthDAO } from './database_access/auth.dao';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
+import { categoryRoutes } from './routes/category.routes';
+import { CategoryController } from './controllers/category.controller';
+import { CategoryDAO } from './database_access/category.dao';
+import { CategoryService } from './services/category.service';
 
 require("dotenv").config();
 
@@ -17,6 +22,8 @@ const port = 3001; // Sets the port number for the app to listen on
 
 // Enable CORS for all requests
 app.use(cors());
+
+app.use(cookieParser());  
 
 // Parses JSON request bodies
 app.use(express.json());
@@ -30,6 +37,9 @@ app.use(express.urlencoded({ extended: true }));
 const authDAO = new AuthDAO();
 const authService = new AuthService(authDAO);
 const authController = new AuthController(authService);
+const categoryDAO = new CategoryDAO();
+const categoryService = new CategoryService(categoryDAO);
+const categoryController = new CategoryController(categoryService);
 
 console.log(process.env.MY_SQL_DB_HOST);
 
@@ -41,6 +51,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
+app.use('/api/', categoryRoutes(categoryController));
 
 // Start the Express server
 app.listen(port, () => {

@@ -1,5 +1,6 @@
 import { Request } from "express";
 
+//---------Authentication---------//
 export interface AuthRequest extends Request {
     user: {
         userId: number;
@@ -35,4 +36,17 @@ export interface AuthResponse {
         email: string;
         name: string;
     }
+}
+
+//---------CATEGORIES---------//
+
+export interface Category {
+    id: number,
+    name: string,
+    created_at: Date
+}
+
+export interface CategoryDTO{
+    userId: number,
+    name: string
 }
