@@ -16,7 +16,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
             name: string;
         };
 
-        (req as any).user = decoded;
+        (req as AuthRequest).user = decoded;
 
         next();
     } catch(error){

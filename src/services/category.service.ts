@@ -6,7 +6,7 @@ export class CategoryService{
     
     constructor(private categoryDAO: CategoryDAO){}
 
-    async createCategory(category: CategoryDTO): Promise<{category: {id: number, name: string}}>{
+    async createCategory(category: CategoryDTO): Promise<Category>{
         
         const existingCategory = await this.categoryDAO.getCategoryByName(category.userId, category.name);
         if (existingCategory){
@@ -14,11 +14,10 @@ export class CategoryService{
         }
         const newCategory = await this.categoryDAO.createCategory(category.userId, category.name);
 
-        return {
-            category: {
-                id: newCategory.id,
-                name: newCategory.name
-            }
-        }
+        return newCategory;
+    }
+
+    async getCategories(userId: number): Promise<Category[]>{
+        return await this.categoryDAO.getCategories(userId);
     }
 }
