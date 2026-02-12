@@ -62,4 +62,30 @@ export class CategoryController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve category' });
         }
     }
+
+    updateCategory = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const categoryId = parseInt(req.params.id as string);
+            const userId = (req as AuthRequest).user.userId;
+            const { name } = req.body;
+
+            if (!name){
+                res.status(400).json({ error: 'Category name is required' });
+                return;
+            }
+            if (isNaN(categoryId)){
+                res.status(400).json({ error: 'Invalid category id' });
+                return;
+            }
+
+            const result = await this.categoryService.updateCategory(name, categoryId, userId);
+            res.status(200).json({ 
+                message: 'Category updated successfully',
+                category: result
+             })
+        } catch(error: any){
+            console.log('Error updating category', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update category' })
+        }
+    }
 }

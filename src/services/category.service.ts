@@ -12,8 +12,8 @@ export class CategoryService{
         if (existingCategory){
             throw new AppError("Category already exists", 409);
         }
-        const newCategory = await this.categoryDAO.createCategory(category.userId, category.name);
 
+        const newCategory = await this.categoryDAO.createCategory(category.userId, category.name);
         return newCategory;
     }
 
@@ -26,6 +26,18 @@ export class CategoryService{
         if (!category){
             throw new AppError("Category not found", 404);
         }
+        
         return category;
+    }
+
+    async updateCategory(name: string, id: number, userId: number): Promise<Category>{
+        const existingCategory = await this.categoryDAO.findCategoryByName(userId, name);
+        
+        if (existingCategory){
+            throw new AppError('Category already exists', 409);
+        }
+
+        const updatedCategory = await this.categoryDAO.updateCategory(name, id, userId);
+        return updatedCategory;
     }
 }

@@ -1,6 +1,7 @@
 import pool from "../database";
 import { Category, CategoryDTO } from '../types';
 import { CategoryQueries } from "../queries/category.queries";
+import { categoryRoutes } from "../routes/category.routes";
 
 export class CategoryDAO{
     async createCategory(userId: number, name: string): Promise<Category>{
@@ -20,6 +21,11 @@ export class CategoryDAO{
 
     async findCategoryById(userId: number, id: number): Promise<Category>{
         const result = await pool.query<Category>(CategoryQueries.FIND_CATEGORY_BY_ID, [userId, id]);
+        return result.rows[0];
+    }
+
+    async updateCategory(name: string, id: number, userId: number): Promise<Category>{
+        const result = await pool.query<Category>(CategoryQueries.UPDATE_CATEGORY, [name, id, userId]);
         return result.rows[0];
     }
 }
