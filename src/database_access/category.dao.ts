@@ -28,4 +28,9 @@ export class CategoryDAO{
         const result = await pool.query<Category>(CategoryQueries.UPDATE_CATEGORY, [name, id, userId]);
         return result.rows[0];
     }
+
+    async deleteCategory(id: number, userId: number): Promise<boolean>{
+        const result = await pool.query<Category>(CategoryQueries.DELETE_CATEGORY, [id, userId]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
 }

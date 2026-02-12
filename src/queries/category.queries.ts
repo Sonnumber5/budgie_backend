@@ -8,5 +8,7 @@ export const CategoryQueries = {
     FIND_CATEGORIES: `SELECT * FROM categories WHERE user_id = $1`,
 
     UPDATE_CATEGORY: `UPDATE categories SET name = $1 WHERE id = $2 AND user_id = $3
-                      RETURNING id, name`
+                      RETURNING id, name`,
+
+    DELETE_CATEGORY: 'DELETE from categories WHERE id = $1 AND user_id = $2'
 }

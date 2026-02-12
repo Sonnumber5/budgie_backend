@@ -26,7 +26,7 @@ export class CategoryService{
         if (!category){
             throw new AppError("Category not found", 404);
         }
-        
+
         return category;
     }
 
@@ -39,5 +39,9 @@ export class CategoryService{
 
         const updatedCategory = await this.categoryDAO.updateCategory(name, id, userId);
         return updatedCategory;
+    }
+
+    async deleteCategory(id: number, userId: number): Promise<boolean>{
+        return this.categoryDAO.deleteCategory(id, userId);
     }
 }

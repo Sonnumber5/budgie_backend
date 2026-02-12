@@ -88,4 +88,26 @@ export class CategoryController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update category' })
         }
     }
+
+    deleteCategory = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const userId = (req as AuthRequest).user.userId;
+            const categoryId = parseInt(req.params.id as string);
+            
+            if (isNaN(categoryId)){
+                res.status(400).json({ error: 'Invalid category id' });
+                return;
+            }
+
+            const result = await this.categoryService.deleteCategory(categoryId, userId);
+            if (!result){
+                res.status(404).json({ error: 'Category not found' });
+                return;
+            }
+            res.status(200).json({ message: 'Category successfully deleted' });
+        }catch(error: any){
+            console.log('Error deleting category', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete category' });
+        }
+    }
 }

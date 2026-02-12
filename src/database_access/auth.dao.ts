@@ -17,4 +17,5 @@ export class AuthDAO {
         const result = await pool.query<User>(AuthQueries.FIND_USER_BY_EMAIL, [email]);
         return result.rows[0] || null;
     }
+    
 }
