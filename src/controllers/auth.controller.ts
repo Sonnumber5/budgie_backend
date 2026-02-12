@@ -48,10 +48,7 @@ export class AuthController{
             });
         } catch(error: any){
             console.error('Registration error:', error);
-            res.status(error.statusCode).json({
-                error: 'Error registering user',
-                details: ''
-            })
+            res.status(error.statusCode || 400).json({ error: error.message || 'Error registering user' })
         }
     }
 
@@ -76,9 +73,9 @@ export class AuthController{
                 message: 'Login successful',
                 user: result.user
             });
-        } catch(error){
+        } catch(error: any){
             console.error('Login error:', error);
-            res.status(500).json({ error: 'Login failed' });
+            res.status(error.statusCode || 500).json({ error: error.message || 'Login failed' });
         }
     }
 

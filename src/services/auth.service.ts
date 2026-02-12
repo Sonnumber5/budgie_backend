@@ -14,7 +14,7 @@ export class AuthService{
         const existingUser = await this.authDAO.findUserByEmail(email);
 
         if (existingUser){
-            throw new AppError('User already exists', 400);
+            throw new AppError('User already exists', 409);
         }
 
         const passwordHash = await bcrypt.hash(password, 10);

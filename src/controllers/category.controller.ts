@@ -31,20 +31,35 @@ export class CategoryController{
             const userId = (req as AuthRequest).user.userId;
             const result = await this.categoryService.getCategories(userId);
 
-            if (result.length === 0){
-                res.status(200).json({
-                    message: 'No categories found',
-                    categories: []
-                })
-            }
-        res.status(200).json({
-            message: 'Categories retrieved successfully',
-            categories: result
-        });
+            res.status(200).json({
+                message: 'Categories retrieved successfully',
+                categories: result
+            });
 
         } catch(error: any){
             console.error('Error retrieving categories', error);
             res.status(error.statusCode || 500).json({ error: error.message  || 'Failed to retreive categories' });
+        }
+    }
+
+    getCategoryById = async (req: Request, res: Response): Promise<void>=> {
+        try{
+            const categoryId = parseInt(req.params.id as string);
+
+            if (isNaN(categoryId)){
+                res.status(400).json({ error: 'Invalid category id' });
+                return;
+            }
+            const userId = (req as AuthRequest).user.userId;
+            const result = await this.categoryService.getCategoryById(userId, categoryId);
+
+            res.status(200).json({ 
+                message: 'Category retrieved successfully',
+                category: result
+            });
+        }catch(error: any){
+            console.log('Error retrieving category', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve category' });
         }
     }
 }
