@@ -3,9 +3,9 @@ export const CategoryQueries = {
                       RETURNING id, name, created_at`,
     FIND_CATEGORY_BY_NAME: `SELECT id, name FROM categories WHERE user_id = $1 AND name = $2`,
 
-    FIND_CATEGORY_BY_ID: `SELECT * FROM categories WHERE user_id = $1 AND id = $2`,
+    FIND_CATEGORY_BY_ID: `SELECT id, name, created_at FROM categories WHERE user_id = $1 AND id = $2`,
 
-    FIND_CATEGORIES: `SELECT * FROM categories WHERE user_id = $1`,
+    FIND_CATEGORIES: `SELECT id, name, created_at FROM categories WHERE user_id = $1`,
 
     UPDATE_CATEGORY: `UPDATE categories SET name = $1 WHERE id = $2 AND user_id = $3
                       RETURNING id, name`,
