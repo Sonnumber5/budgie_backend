@@ -8,8 +8,14 @@ export class CategoryController{
     
     createCategory = async (req: Request, res: Response): Promise<void>=> {
         try{
+
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+
             const { name } = req.body;
-            const userId = (req as AuthRequest).user.userId;
 
             if (!name){
                 res.status(400).json({ error: 'Category name is required' });
@@ -28,7 +34,12 @@ export class CategoryController{
 
     getCategories = async (req: Request, res: Response): Promise<void> => {
         try{
-            const userId = (req as AuthRequest).user.userId;
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+
             const result = await this.categoryService.getCategories(userId);
 
             res.status(200).json({
@@ -44,13 +55,18 @@ export class CategoryController{
 
     getCategoryById = async (req: Request, res: Response): Promise<void>=> {
         try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+            
             const categoryId = parseInt(req.params.id as string);
 
             if (isNaN(categoryId)){
                 res.status(400).json({ error: 'Invalid category id' });
                 return;
             }
-            const userId = (req as AuthRequest).user.userId;
             const result = await this.categoryService.getCategoryById(userId, categoryId);
 
             res.status(200).json({ 
@@ -65,8 +81,13 @@ export class CategoryController{
 
     updateCategory = async (req: Request, res: Response): Promise<void> => {
         try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+            
             const categoryId = parseInt(req.params.id as string);
-            const userId = (req as AuthRequest).user.userId;
             const { name } = req.body;
 
             if (!name){
@@ -91,7 +112,12 @@ export class CategoryController{
 
     deleteCategory = async (req: Request, res: Response): Promise<void> => {
         try{
-            const userId = (req as AuthRequest).user.userId;
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+
             const categoryId = parseInt(req.params.id as string);
             
             if (isNaN(categoryId)){

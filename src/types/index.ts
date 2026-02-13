@@ -14,8 +14,8 @@ export interface User {
     email: string;
     password_hash: string;
     name: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface RegisterDTO {
@@ -43,7 +43,7 @@ export interface AuthResponse {
 export interface Category {
     id: number,
     name: string,
-    createdAt: Date
+    createdAt: string
 }
 
 export interface CategoryDTO{
@@ -59,10 +59,9 @@ export interface Income {
     amount: number,
     source: string,
     description: string,
-    incomeDate: Date,
-    month: Date,
-    createdAt: Date,
-    updatedAt: Date
+    incomeDate: string,
+    createdAt: string,
+    updatedAt: string
 }
 
 export interface IncomeDTO{
@@ -70,6 +69,6 @@ export interface IncomeDTO{
     amount: number,
     source: string,
     description: string,
-    incomeDate: Date,
-    month: Date
+    incomeDate: string,
+    month: string
 }

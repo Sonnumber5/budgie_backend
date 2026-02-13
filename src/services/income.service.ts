@@ -7,4 +7,12 @@ export class IncomeService{
     async createIncome(userId: number, amount: string, source: string, description: string, incomeDate: string, month: string): Promise<Income>{
         return await this.incomeDAO.createIncome(userId, amount, source, description, incomeDate, month);
     }
+
+    async getIncomeByDate(userId: number, month: string): Promise<Income[]>{
+        return await this.incomeDAO.findIncomeByMonth(userId, month);
+    }
+
+    async getAllIncome(userId: number): Promise<Income[]>{
+        return await this.incomeDAO.findAllIncome(userId);
+    }
 }
