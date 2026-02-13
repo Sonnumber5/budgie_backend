@@ -12,6 +12,7 @@ export class CategoryController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
 
@@ -37,6 +38,7 @@ export class CategoryController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
 
@@ -58,6 +60,7 @@ export class CategoryController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
             
@@ -84,6 +87,7 @@ export class CategoryController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
             
@@ -115,6 +119,7 @@ export class CategoryController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
 
@@ -125,11 +130,8 @@ export class CategoryController{
                 return;
             }
 
-            const result = await this.categoryService.deleteCategory(categoryId, userId);
-            if (!result){
-                res.status(404).json({ error: 'Category not found' });
-                return;
-            }
+            await this.categoryService.deleteCategory(categoryId, userId);
+
             res.status(200).json({ message: 'Category successfully deleted' });
         }catch(error: any){
             console.log('Error deleting category', error);

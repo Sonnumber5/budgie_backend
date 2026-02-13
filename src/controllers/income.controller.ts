@@ -13,13 +13,19 @@ export class IncomeController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
 
             const { amount, source, description, income_date } = req.body;
 
-            if (!amount || !source || !income_date){
+            if (!amount || !source){
                 res.status(400).json({ error: 'Amount and source are required' });
+                return;
+            }
+
+            if (!income_date){
+                res.status(400).json({ error: 'Income date is required' });
                 return;
             }
 
@@ -52,6 +58,7 @@ export class IncomeController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
 
@@ -74,7 +81,7 @@ export class IncomeController{
             });
 
         } catch(error: any){
-            console.log('Error retrieving income', error),
+            console.log('Error retrieving income', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
         }
     }
@@ -84,6 +91,7 @@ export class IncomeController{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
+                return;
             }
             const userId = authRequest.user.userId;
             const incomeId = parseInt(req.params.id as string);
@@ -101,6 +109,84 @@ export class IncomeController{
         } catch(error: any){
             console.log('Error retrieving income', error),
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+        }
+    }
+
+    updateIncome = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const { amount, source, description, income_date } = req.body;
+            const incomeId = parseInt(req.params.id as string);
+
+            if (isNaN(incomeId)){
+                res.status(400).json({ error: 'Invalid income id' });
+                return;
+            }
+
+            if (!amount || !source){
+                res.status(400).json({ error: 'Amount and source are required' });
+                return;
+            }
+
+            if (!income_date){
+                res.status(400).json({ error: 'Income date is required' });
+                return;
+            }
+
+            if (!isValidDate(income_date)){
+                res.status(400).json({ error: 'Invalid date format' });
+                return;
+            }
+
+            if (amount < 0){
+                res.status(400).json({ error: 'Amount must be a positive number' });
+                return;
+            }
+
+            const month = getMonth(income_date);
+
+            const newIncome = await this.incomeService.updateIncome(amount, source, description, income_date, month, incomeId, userId);
+            if (!newIncome){
+                res.status(404).json({ error: 'Income not found' });
+                return;
+            }
+            res.status(200).json({ 
+                message: 'Income updated successfully',
+                income: newIncome
+             });
+        } catch(error: any){
+            console.log('Error updating income', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update income' });
+        }
+    }
+
+    deleteIncome = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const incomeId = parseInt(req.params.id as string);
+
+            if (isNaN(incomeId)){
+                res.status(400).json({ error: 'Invalid income id' });
+                return;
+            }
+
+            await this.incomeService.deleteIncome(incomeId, userId);
+
+            res.status(200).json({ message: 'Income successfully deleted' });
+        } catch(error: any){
+            console.log('Error deleting income', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete income' });
         }
     }
 
