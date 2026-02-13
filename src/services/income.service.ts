@@ -1,5 +1,6 @@
 import { IncomeDAO } from "../database_access/income.dao";
 import { Income } from "../types";
+import { AppError } from "../utils/AppError";
 
 export class IncomeService{
     constructor(private incomeDAO: IncomeDAO){}
@@ -14,5 +15,13 @@ export class IncomeService{
 
     async getAllIncome(userId: number): Promise<Income[]>{
         return await this.incomeDAO.findAllIncome(userId);
+    }
+
+    async getIncomeById(userId: number, id: number): Promise<Income>{
+        const result =  await this.incomeDAO.findIncomeById(userId, id);
+        if (!result){
+            throw new AppError('Income not found', 404);
+        }
+        return result;
     }
 }

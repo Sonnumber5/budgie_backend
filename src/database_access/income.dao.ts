@@ -18,4 +18,9 @@ export class IncomeDAO{
         const result = await pool.query<Income>(IncomeQueries.FIND_ALL_INCOME, [userId]);
         return result.rows;
     }
+
+    async findIncomeById(userId: number, id: number): Promise<Income>{
+        const result = await pool.query<Income>(IncomeQueries.FIND_INCOME_BY_ID, [userId, id]);
+        return result.rows[0];
+    }
 }

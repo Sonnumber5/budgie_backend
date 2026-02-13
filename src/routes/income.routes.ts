@@ -7,6 +7,7 @@ export const IncomeRoutes = (incomeController: IncomeController) => {
 
     router.post('/income', authenticate, incomeController.createIncome);
     router.get('/income', authenticate, incomeController.getIncome);
+    router.get('/income/:id', authenticate, incomeController.getIncomeById);
 
     return router;
 }

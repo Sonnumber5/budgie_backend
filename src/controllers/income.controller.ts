@@ -75,7 +75,33 @@ export class IncomeController{
 
         } catch(error: any){
             console.log('Error retrieving income', error),
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve message' });
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
         }
     }
+
+    getIncomeById = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+            }
+            const userId = authRequest.user.userId;
+            const incomeId = parseInt(req.params.id as string);
+
+            if (isNaN(incomeId)){
+                res.status(400).json({ error: 'Invalid income id' });
+                return;
+            }
+
+            const income = await this.incomeService.getIncomeById(userId, incomeId);
+            res.status(200).json({ 
+                message: 'Successfully retrieved income',
+                income: income
+             })
+        } catch(error: any){
+            console.log('Error retrieving income', error),
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+        }
+    }
+
 }
