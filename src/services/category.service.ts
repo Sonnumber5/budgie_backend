@@ -13,8 +13,7 @@ export class CategoryService{
             throw new AppError("Category already exists", 409);
         }
 
-        const newCategory = await this.categoryDAO.createCategory(category.userId, category.name);
-        return newCategory;
+        return await this.categoryDAO.createCategory(category.userId, category.name);
     }
 
     async getCategories(userId: number): Promise<Category[]>{
@@ -23,6 +22,15 @@ export class CategoryService{
 
     async getCategoryById(userId: number, id: number): Promise<Category>{
         const category = await this.categoryDAO.findCategoryById(userId, id);
+        if (!category){
+            throw new AppError("Category not found", 404);
+        }
+
+        return category;
+    }
+
+    async getCategoryByName(userId: number, name: string): Promise<Category>{
+        const category = await this.categoryDAO.findCategoryByName(userId, name);
         if (!category){
             throw new AppError("Category not found", 404);
         }

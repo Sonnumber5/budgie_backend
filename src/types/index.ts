@@ -72,3 +72,26 @@ export interface IncomeDTO{
     incomeDate: string,
     month: string
 }
+
+//---------EXPENSE---------//
+
+export interface Expense {
+    id: number,
+    categoryId: number,
+    vendor: string,
+    amount: number,
+    description: string,
+    expenseDate: string,
+    createdAt: string,
+    updatedAt: string
+}
+
+export interface ExpenseDTO{
+    userId: number,
+    categoryId: number,
+    vendor: string,
+    amount: number,
+    description: string,
+    expenseDate: string,
+    month: string
+}
