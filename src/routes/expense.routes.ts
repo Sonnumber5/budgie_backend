@@ -7,6 +7,7 @@ export const ExpenseRoutes = (expenseController: ExpenseController) => {
 
     router.post('/expenses', authenticate, expenseController.createExpense);
     router.get('/expenses', authenticate, expenseController.getExpenses);
+    router.get('/expenses/:id', authenticate, expenseController.getExpenseById);
 
     return router;
 }

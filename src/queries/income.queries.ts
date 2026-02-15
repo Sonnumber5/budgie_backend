@@ -10,13 +10,15 @@ export const IncomeQueries = {
                                   created_at AS "createdAt", 
                                   updated_at AS "updatedAt" 
                            FROM income 
-                           WHERE user_id = $1 AND month = $2`,
+                           WHERE user_id = $1 AND month = $2
+                           ORDER BY income_date DESC`,
     FIND_ALL_INCOME: `SELECT id, amount, source, description, 
                              income_date AS "incomeDate", 
                              created_at AS "createdAt", 
                              updated_at AS "updatedAt" 
                       FROM income 
-                      WHERE user_id = $1`,
+                      WHERE user_id = $1
+                      ORDER BY income_date DESC`,
     FIND_INCOME_BY_ID: `SELECT id, amount, source, description, 
                                income_date AS "incomeDate", 
                                created_at AS "createdAt", 

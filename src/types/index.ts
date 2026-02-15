@@ -80,6 +80,7 @@ export interface IncomeDTO{
 export interface Expense {
     id: number,
     categoryId: number,
+    categoryName: string,
     vendor: string,
     amount: number,
     description: string,

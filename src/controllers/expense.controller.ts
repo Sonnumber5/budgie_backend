@@ -96,4 +96,31 @@ export class ExpenseController{
             res.status(error.statusCode || 500).json({ error: error.message || "Failed to retrieve expenses" });
         }
     }
+
+    getExpenseById = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(400).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const categoryId = parseInt(req.params.id as string);
+
+            if (isNaN(categoryId)){
+                res.status(400).json({ error: 'Invalid expense id' });
+            }
+
+            const expense = await this.expenseService.getExpenseById(userId, categoryId);
+            res.status(200).json({
+                message: 'Successfully retrieved expense',
+                expense: expense
+            });
+
+        } catch(error: any){
+            console.log('Error retrieving expense', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve expense' });
+        }
+    }
 }

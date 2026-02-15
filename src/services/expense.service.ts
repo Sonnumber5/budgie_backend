@@ -23,4 +23,12 @@ export class ExpenseService{
     async getAllExpenses(userId: number): Promise<Expense[]>{
         return await this.expenseDAO.findAllExpenses(userId);
     }
+
+    async getExpenseById(userId: number, id: number): Promise<Expense>{
+        const result = await this.expenseDAO.findExpenseById(userId, id);
+        if (!result){
+            throw new AppError('Expense not found', 404);
+        }
+        return result;
+    }
 }

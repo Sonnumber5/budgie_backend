@@ -17,4 +17,9 @@ export class ExpenseDAO{
         const result = await pool.query<Expense>(ExpenseQueries.FIND_ALL_EXPENSES, [userId]);
         return result.rows;
     }
+
+    async findExpenseById(userId: number, id: number): Promise<Expense>{
+        const result = await pool.query<Expense>(ExpenseQueries.FIND_EXPENSE_BY_ID, [userId, id]);
+        return result.rows[0];
+    }
 }
