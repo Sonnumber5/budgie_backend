@@ -15,4 +15,12 @@ export class ExpenseService{
         }
         return await this.expenseDAO.createExpense(expenseDTO);
     }
+
+    async getExpensesByDate(userId: number, month: string): Promise<Expense[]>{
+        return await this.expenseDAO.findExpensesByDate(userId, month);
+    }
+
+    async getAllExpenses(userId: number): Promise<Expense[]>{
+        return await this.expenseDAO.findAllExpenses(userId);
+    }
 }

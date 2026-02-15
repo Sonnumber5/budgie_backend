@@ -73,21 +73,21 @@ export class IncomeController{
             const userId = authRequest.user.userId;
 
             const { month } = req.query;
-            let result;
+            let incomeArr;
 
             if (typeof month === 'string'){
                 if (!isValidDate(month as string)){
                     res.status(400).json({ error: 'Invalid date format' });
                     return;
                 }
-                result = await this.incomeService.getIncomeByDate(userId, month);
+                incomeArr = await this.incomeService.getIncomeByDate(userId, month);
             }
             else{
-                result = await this.incomeService.getAllIncome(userId);
+                incomeArr = await this.incomeService.getAllIncome(userId);
             }
             res.status(200).json({ 
                 message: 'Income retrieved successfully',
-                income: result
+                income: incomeArr
             });
 
         } catch(error: any){

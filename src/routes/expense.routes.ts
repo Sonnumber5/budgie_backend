@@ -6,6 +6,7 @@ export const ExpenseRoutes = (expenseController: ExpenseController) => {
     const router = Router();
 
     router.post('/expenses', authenticate, expenseController.createExpense);
+    router.get('/expenses', authenticate, expenseController.getExpenses);
 
     return router;
 }

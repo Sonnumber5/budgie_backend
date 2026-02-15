@@ -66,4 +66,34 @@ export class ExpenseController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create expense' });
         }
     }
+
+    getExpenses = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            let expensesArr;
+
+            const { month } = req.query;
+            if (typeof(month) === "string"){
+                if (!isValidDate(month as string)){
+                    res.status(400).json({ error: 'invalid date format' });
+                    return;
+                }
+                expensesArr = await this.expenseService.getExpensesByDate(userId, month);
+            } else{
+                expensesArr = await this.expenseService.getAllExpenses(userId);
+            }
+            res.status(200).json({
+                message: 'Successfully retrieved expenses',
+                expenses: expensesArr
+            });
+        } catch(error: any){
+            console.log('Error retieving expenses', error);
+            res.status(error.statusCode || 500).json({ error: error.message || "Failed to retrieve expenses" });
+        }
+    }
 }
