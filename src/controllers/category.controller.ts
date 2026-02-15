@@ -1,6 +1,6 @@
 import { RequestHandler, Request, Response } from "express";
 import { CategoryService } from "../services/category.service";
-import { AuthRequest } from "../types";
+import { AuthRequest, CategoryDTO } from "../types";
 
 export class CategoryController{
 
@@ -22,7 +22,13 @@ export class CategoryController{
                 res.status(400).json({ error: 'Category name is required' });
                 return;
             }
-            const result = await this.categoryService.createCategory({ userId, name });
+
+            const categoryDTO: CategoryDTO = {
+                userId,
+                name
+            }
+
+            const result = await this.categoryService.createCategory(categoryDTO);
             res.status(201).json({
                 message: 'Created category successfully', 
                 category: result
@@ -91,19 +97,25 @@ export class CategoryController{
             }
             const userId = authRequest.user.userId;
             
-            const categoryId = parseInt(req.params.id as string);
+            const id = parseInt(req.params.id as string);
             const { name } = req.body;
 
             if (!name){
                 res.status(400).json({ error: 'Category name is required' });
                 return;
             }
-            if (isNaN(categoryId)){
+            if (isNaN(id)){
                 res.status(400).json({ error: 'Invalid category id' });
                 return;
             }
 
-            const result = await this.categoryService.updateCategory(name, categoryId, userId);
+            const categoryDTO: CategoryDTO = {
+                id,
+                userId,
+                name
+            }
+
+            const result = await this.categoryService.updateCategory(categoryDTO);
             res.status(200).json({ 
                 message: 'Category updated successfully',
                 category: result

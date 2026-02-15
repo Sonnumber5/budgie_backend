@@ -8,18 +8,18 @@ export class AuthService{
     
     constructor(private authDAO: AuthDAO){}
 
-    async register(data: RegisterDTO): Promise<{user: {id: number; email: string; name: string}}>{
-        const { email, password, name } = data;
+    async register(registerDTO: RegisterDTO): Promise<{user: {id: number; email: string; name: string}}>{
 
-        const existingUser = await this.authDAO.findUserByEmail(email);
+        const existingUser = await this.authDAO.findUserByEmail(registerDTO.email);
 
         if (existingUser){
             throw new AppError('User already exists', 409);
         }
 
-        const passwordHash = await bcrypt.hash(password, 10);
+        const passwordHash = await bcrypt.hash(registerDTO.password, 10);
+        registerDTO.password = passwordHash;
 
-        const newUser = await this.authDAO.createUser(email, passwordHash, name);
+        const newUser = await this.authDAO.createUser(registerDTO);
 
         return {
             user: {
@@ -30,14 +30,14 @@ export class AuthService{
         };
     }
 
-    async login(email: string, password: string): Promise<AuthResponse>{
+    async login(loginDTO: loginDTO): Promise<AuthResponse>{
 
-        const user = await this.authDAO.findUserByEmail(email);
+        const user = await this.authDAO.findUserByEmail(loginDTO.email);
         if (!user){
             throw new AppError('Invalid credentials', 401);
         }
 
-        const validPassword = await bcrypt.compare(password, user.password_hash);
+        const validPassword = await bcrypt.compare(loginDTO.password, user.passwordHash);
         if (!validPassword){
             throw new AppError('Invalid credentials', 401);
         }

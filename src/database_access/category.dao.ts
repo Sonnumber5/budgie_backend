@@ -4,8 +4,8 @@ import { CategoryQueries } from "../queries/category.queries";
 import { categoryRoutes } from "../routes/category.routes";
 
 export class CategoryDAO{
-    async createCategory(userId: number, name: string): Promise<Category>{
-        const result = await pool.query<Category>(CategoryQueries.CREATE_CATEGORY, [userId, name]);
+    async createCategory(categoryDTO: CategoryDTO): Promise<Category>{
+        const result = await pool.query<Category>(CategoryQueries.CREATE_CATEGORY, [categoryDTO.userId, categoryDTO.name]);
         return result.rows[0];
     }
 
@@ -24,8 +24,8 @@ export class CategoryDAO{
         return result.rows[0];
     }
 
-    async updateCategory(name: string, id: number, userId: number): Promise<Category>{
-        const result = await pool.query<Category>(CategoryQueries.UPDATE_CATEGORY, [name, id, userId]);
+    async updateCategory(categoryDTO: CategoryDTO): Promise<Category>{
+        const result = await pool.query<Category>(CategoryQueries.UPDATE_CATEGORY, [categoryDTO.name, categoryDTO.id, categoryDTO.userId]);
         return result.rows[0];
     }
 

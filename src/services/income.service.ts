@@ -1,12 +1,12 @@
 import { IncomeDAO } from "../database_access/income.dao";
-import { Income } from "../types";
+import { Income, IncomeDTO } from "../types";
 import { AppError } from "../utils/AppError";
 
 export class IncomeService{
     constructor(private incomeDAO: IncomeDAO){}
 
-    async createIncome(userId: number, amount: number, source: string, description: string, incomeDate: string, month: string): Promise<Income>{
-        return await this.incomeDAO.createIncome(userId, amount, source, description, incomeDate, month);
+    async createIncome(incomeDTO: IncomeDTO): Promise<Income>{
+        return await this.incomeDAO.createIncome(incomeDTO);
     }
 
     async getIncomeByDate(userId: number, month: string): Promise<Income[]>{
@@ -25,8 +25,8 @@ export class IncomeService{
         return result;
     }
 
-    async updateIncome(amount: number, source: string, description: string, incomeDate: string, month: string, id: number, userId: number): Promise<Income>{
-        return await this.incomeDAO.updateIncome(amount, source, description, incomeDate, month, id, userId);
+    async updateIncome(incomeDTO: IncomeDTO): Promise<Income>{
+        return await this.incomeDAO.updateIncome(incomeDTO);
     }
 
     async deleteIncome(id: number, userId: number): Promise<void>{

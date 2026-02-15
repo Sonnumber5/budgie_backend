@@ -1,6 +1,6 @@
 import { RequestHandler, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
-import { AuthRequest, User } from "../types";
+import { AuthRequest, loginDTO, RegisterDTO, User } from "../types";
 
 export class AuthController{
 
@@ -46,7 +46,12 @@ export class AuthController{
                 return;
             }
 
-            const result = await this.authService.register({email, password, name});
+            const userToRegister: RegisterDTO = {
+                email, 
+                password,
+                name
+            }
+            const result = await this.authService.register(userToRegister);
 
             res.status(201).json({
                 message: 'User created successfully',
@@ -66,7 +71,12 @@ export class AuthController{
                 res.status(400).json({ error: 'Email and password are required' });
                 return;
             }
-            const result = await this.authService.login(email, password);
+            const loginCredentials: loginDTO = {
+                email,
+                password
+            }
+
+            const result = await this.authService.login(loginCredentials);
 
             res.cookie('token', result.token, {
                 httpOnly: true,

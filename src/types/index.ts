@@ -12,7 +12,7 @@ export interface AuthRequest extends Request {
 export interface User {
     id: number;
     email: string;
-    password_hash: string;
+    passwordHash: string;
     name: string;
     createdAt: string;
     updatedAt: string;
@@ -47,6 +47,7 @@ export interface Category {
 }
 
 export interface CategoryDTO{
+    id?: number,
     userId: number,
     name: string
 }
@@ -65,6 +66,7 @@ export interface Income {
 }
 
 export interface IncomeDTO{
+    id?: number,
     userId: number,
     amount: number,
     source: string,

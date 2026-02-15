@@ -1,6 +1,6 @@
 import { IncomeService } from "../services/income.service";
 import { Request, Response } from "express";
-import { AuthRequest } from "../types";
+import { AuthRequest, IncomeDTO } from "../types";
 import { isValidDate, getMonth } from "../utils/date";
 import { AppError } from "../utils/AppError";
 
@@ -17,19 +17,19 @@ export class IncomeController{
             }
             const userId = authRequest.user.userId;
 
-            const { amount, source, description, income_date } = req.body;
+            const { amount, source, description, incomeDate } = req.body;
 
             if (!amount || !source){
                 res.status(400).json({ error: 'Amount and source are required' });
                 return;
             }
 
-            if (!income_date){
+            if (!incomeDate){
                 res.status(400).json({ error: 'Income date is required' });
                 return;
             }
 
-            if (!isValidDate(income_date)){
+            if (!isValidDate(incomeDate)){
                 res.status(400).json({ error: 'Invalid date format' });
                 return;
             }
@@ -39,8 +39,18 @@ export class IncomeController{
                 return;
             }
 
-            const month = getMonth(income_date);
-            const result = await this.incomeService.createIncome(userId, amount, source, description, income_date, month);
+            const month = getMonth(incomeDate);
+
+            const incomeDTO: IncomeDTO = {
+                userId,
+                amount,
+                source,
+                description,
+                incomeDate,
+                month
+            }
+
+            const result = await this.incomeService.createIncome(incomeDTO);
             res.status(201).json({
                 message: 'Successfully created income',
                 income: result
@@ -120,10 +130,10 @@ export class IncomeController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { amount, source, description, income_date } = req.body;
-            const incomeId = parseInt(req.params.id as string);
+            const { amount, source, description, incomeDate } = req.body;
+            const id = parseInt(req.params.id as string);
 
-            if (isNaN(incomeId)){
+            if (isNaN(id)){
                 res.status(400).json({ error: 'Invalid income id' });
                 return;
             }
@@ -133,12 +143,12 @@ export class IncomeController{
                 return;
             }
 
-            if (!income_date){
+            if (!incomeDate){
                 res.status(400).json({ error: 'Income date is required' });
                 return;
             }
 
-            if (!isValidDate(income_date)){
+            if (!isValidDate(incomeDate)){
                 res.status(400).json({ error: 'Invalid date format' });
                 return;
             }
@@ -148,9 +158,19 @@ export class IncomeController{
                 return;
             }
 
-            const month = getMonth(income_date);
+            const month = getMonth(incomeDate);
 
-            const newIncome = await this.incomeService.updateIncome(amount, source, description, income_date, month, incomeId, userId);
+            const incomeDTO: IncomeDTO = {
+                id,
+                userId,
+                amount,
+                source,
+                description,
+                incomeDate,
+                month
+            }
+
+            const newIncome = await this.incomeService.updateIncome(incomeDTO);
             if (!newIncome){
                 res.status(404).json({ error: 'Income not found' });
                 return;

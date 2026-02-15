@@ -6,14 +6,14 @@ export class CategoryService{
     
     constructor(private categoryDAO: CategoryDAO){}
 
-    async createCategory(category: CategoryDTO): Promise<Category>{
+    async createCategory(categoryDTO: CategoryDTO): Promise<Category>{
         
-        const existingCategory = await this.categoryDAO.findCategoryByName(category.userId, category.name);
+        const existingCategory = await this.categoryDAO.findCategoryByName(categoryDTO.userId, categoryDTO.name);
         if (existingCategory){
             throw new AppError("Category already exists", 409);
         }
 
-        return await this.categoryDAO.createCategory(category.userId, category.name);
+        return await this.categoryDAO.createCategory(categoryDTO);
     }
 
     async getCategories(userId: number): Promise<Category[]>{
@@ -38,14 +38,14 @@ export class CategoryService{
         return category;
     }
 
-    async updateCategory(name: string, id: number, userId: number): Promise<Category>{
-        const existingCategory = await this.categoryDAO.findCategoryByName(userId, name);
+    async updateCategory(categoryDTO: CategoryDTO): Promise<Category>{
+        const existingCategory = await this.categoryDAO.findCategoryByName(categoryDTO.userId, categoryDTO.name);
         
         if (existingCategory){
             throw new AppError('Category already exists', 409);
         }
 
-        const updatedCategory = await this.categoryDAO.updateCategory(name, id, userId);
+        const updatedCategory = await this.categoryDAO.updateCategory(categoryDTO);
         return updatedCategory;
     }
 
