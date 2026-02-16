@@ -8,6 +8,8 @@ export const ExpenseRoutes = (expenseController: ExpenseController) => {
     router.post('/expenses', authenticate, expenseController.createExpense);
     router.get('/expenses', authenticate, expenseController.getExpenses);
     router.get('/expenses/:id', authenticate, expenseController.getExpenseById);
+    router.put('/expenses/:id', authenticate, expenseController.updateExpense);
+    router.delete('/expenses/:id', authenticate, expenseController.deleteExpense);
 
     return router;
 }

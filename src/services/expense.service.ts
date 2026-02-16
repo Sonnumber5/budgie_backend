@@ -31,4 +31,24 @@ export class ExpenseService{
         }
         return result;
     }
+
+    async updateExpense(userId: number, id: number, expenseDTO: ExpenseDTO): Promise<Expense>{
+        const existingCategory = await this.categoryDAO.findCategoryById(userId, expenseDTO.categoryId);
+        if (!existingCategory){
+            throw new AppError('Category not found', 404);
+        }
+
+        const existingExpense = await this.expenseDAO.findExpenseById(userId, id);
+        if (!existingExpense){
+            throw new AppError('Expense not found', 404);
+        }
+        return await this.expenseDAO.updateExpense(userId, id, expenseDTO);
+    }
+
+    async deleteExpense(userId: number, id: number): Promise<void>{
+        const result = await this.expenseDAO.deleteExpense(userId, id);
+        if (!result){
+            throw new AppError('Expense not found', 404);
+        }
+    }
 }

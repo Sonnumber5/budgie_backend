@@ -38,6 +38,10 @@ export class ExpenseController{
                 return;
             }
 
+            if (amount < 0){
+                res.status(400).json({ error: 'Amount must be a positive number' });
+            }
+
             if (!isValidDate(expenseDate)){
                 res.status(400).json({ error: 'Invalid date format' });
                 return;
@@ -121,6 +125,99 @@ export class ExpenseController{
         } catch(error: any){
             console.log('Error retrieving expense', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve expense' });
+        }
+    }
+
+    updateExpense = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const { existingCategoryId, vendor, amount, description, expenseDate } = req.body;
+            
+            const id = parseInt(req.params.id as string); 
+
+            if (isNaN(id)) {
+                res.status(400).json({ error: 'Invalid expense id' });
+                return;
+            }
+            
+            let category;
+
+            if (!existingCategoryId){
+                category = await this.categoryService.getCategoryByName(userId, 'Uncategorized');
+            } else{
+                category = await this.categoryService.getCategoryById(userId, existingCategoryId);
+            }
+
+            if (!category) {
+                res.status(500).json({ error: 'Default category not found' });
+                return;
+            }
+            
+            let categoryId = category.id;
+
+            if (!vendor || !amount || !expenseDate) {
+                res.status(400).json({ error: 'Vendor, amount, and expense date are required' });
+                return;
+            }
+
+            if (amount < 0){
+                res.status(400).json({ error: 'Amount must be a positive number' });
+            }
+
+            if (!isValidDate(expenseDate)){
+                res.status(400).json({ error: 'Invalid date format' });
+                return;
+            }
+
+            const month = getMonth(expenseDate);
+
+            const updateExpense: ExpenseDTO = {
+                userId,
+                categoryId,
+                vendor,
+                amount, 
+                description,
+                expenseDate,
+                month
+            }
+
+            const result = await this.expenseService.updateExpense(userId, id, updateExpense);
+            res.status(200).json({ 
+                message: 'Expense updated successfully',
+                expense: result
+             })
+
+        } catch(error: any){
+            console.log('Error updating expense', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update expense' });
+        }
+    }
+
+    deleteExpense = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+    
+            if (isNaN(id)){
+                res.status(500).json({ error: 'Invalid expense id' });
+            }
+    
+            await this.expenseService.deleteExpense(userId, id);
+            res.status(200).json({ message: 'Expense deleted successfully' });
+        }
+        catch(error: any){
+            console.log('Error deleting expense', error);
+            res.status(error.statusCode || 500).json({ error: error.message || "Failed to delete expense" });
         }
     }
 }

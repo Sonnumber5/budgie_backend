@@ -22,4 +22,14 @@ export class ExpenseDAO{
         const result = await pool.query<Expense>(ExpenseQueries.FIND_EXPENSE_BY_ID, [userId, id]);
         return result.rows[0];
     }
+
+    async updateExpense(userId: number, id: number, expenseDTO: ExpenseDTO): Promise<Expense>{
+        const result = await pool.query<Expense>(ExpenseQueries.UPDATE_EXPENSE, [expenseDTO.categoryId, expenseDTO.vendor, expenseDTO.amount, expenseDTO.description, expenseDTO.expenseDate, expenseDTO.month, id, userId]);
+        return result.rows[0];
+    }
+
+    async deleteExpense(userId: number, id: number): Promise<boolean>{
+        const result = await pool.query<Expense>(ExpenseQueries.DELETE_EXPENSE, [userId, id]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
 }
