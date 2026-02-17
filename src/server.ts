@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
-import express, { Request, Response } from 'express'; // Imports express and the Request/Response types for type safety
-import cors from 'cors'; // CORS middleware
+import express, { Request, Response } from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import helmet from 'helmet'; // Security middleware
+import helmet from 'helmet'; 
 import pool from './database';
 import { authRoutes } from './routes/auth.routes';
 import { AuthDAO } from './database_access/auth.dao';
@@ -20,6 +20,14 @@ import { ExpenseDAO } from './database_access/expense.dao';
 import { ExpenseService } from './services/expense.service';
 import { ExpenseController } from './controllers/expense.controller';
 import { ExpenseRoutes } from './routes/expense.routes';
+import { MonthlyBudgetDAO } from './database_access/monthlyBudget.dao';
+import { MonthlyBudgetService } from './services/monthlyBudget.service';
+import { MonthlyBudgetController } from './controllers/monthlyBudget.controller';
+import { CategoryBudgetDAO } from './database_access/categoryBudget.dao';
+import { CategoryBudgetService } from './services/categoryBudget.service';
+import { CategoryBudgetController } from './controllers/categoryBudget.controller';
+import { MonthlyBudgetRoutes } from './routes/monthlyBudget.routes';
+import { CategoryBudgetRoutes } from './routes/categoryBudget.routes';
 
 require("dotenv").config();
 
@@ -53,7 +61,13 @@ const incomeService = new IncomeService(incomeDAO);
 const incomeController = new IncomeController(incomeService);
 const expenseDAO = new ExpenseDAO();
 const expenseService = new ExpenseService(expenseDAO, categoryDAO);
-const expenseController = new ExpenseController(expenseService, categoryService)
+const expenseController = new ExpenseController(expenseService, categoryService);
+const monthlyBudgetDAO = new MonthlyBudgetDAO();
+const monthlyBudgetService = new MonthlyBudgetService(monthlyBudgetDAO, categoryDAO);
+const monthlyBudgetController = new MonthlyBudgetController(monthlyBudgetService);
+const categoryBudgetDAO = new CategoryBudgetDAO();
+const categoryBudgetService = new CategoryBudgetService(categoryBudgetDAO);
+const categoryBudgetController = new CategoryBudgetController(categoryBudgetService);
 
 
 console.log(process.env.MY_SQL_DB_HOST);
@@ -66,7 +80,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController));
+app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), MonthlyBudgetRoutes(monthlyBudgetController), CategoryBudgetRoutes(categoryBudgetController));
 
 // Start the Express server
 app.listen(port, () => {

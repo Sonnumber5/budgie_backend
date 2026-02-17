@@ -9,7 +9,7 @@ export const categoryRoutes = (categoryController: CategoryController) => {
     router.get('/categories', authenticate, categoryController.getCategories);
     router.get('/categories/:id', authenticate, categoryController.getCategoryById);
     router.put('/categories/:id', authenticate, categoryController.updateCategory);
-    router.delete('/categories/:id', authenticate, categoryController.deleteCategory);
+    //router.delete('/categories/:id', authenticate, categoryController.deleteCategory);
     
    return router;
 }
