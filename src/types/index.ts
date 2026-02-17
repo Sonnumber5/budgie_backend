@@ -38,6 +38,7 @@ export interface AuthResponse {
     }
 }
 
+
 //---------CATEGORIES---------//
 
 export interface Category {
@@ -90,11 +91,52 @@ export interface Expense {
 }
 
 export interface ExpenseDTO{
-    userId: number,
     categoryId: number,
+    userId: number,
     vendor: string,
     amount: number,
     description: string,
     expenseDate: string,
     month: string
+}
+
+
+//---------MONTHLY BUDGET---------//
+
+export interface MonthlyBudget{
+    id: number, 
+    month: string,
+    expectedIncome: number,
+    categoryBudgets: CategroyBudget[],
+    createdAt: string,
+    updatedAt: string
+}
+
+export interface MonthlyBudgetDTO{
+    id?: number, 
+    userId: number,
+    month: string,
+    expectedIncome: number,
+    categoryBudgets: CategroyBudget[],
+}
+
+
+//---------CATEGORY BUDGET---------//
+
+export interface CategroyBudget{
+    id: number,
+    monthlyBudgetId: number,
+    categoryId: number,
+    budgetedAmount: number,
+    createdAt: string,
+    updatedAt: string
+}
+
+export interface CategoryBudgetDTO{
+    id?: number,
+    userId: number,
+    monthlyBudgetId: number,
+    categoryId: number,
+    budgetAmount: number,
+    
 }
