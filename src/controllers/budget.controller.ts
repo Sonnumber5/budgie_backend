@@ -21,8 +21,8 @@ export class MonthlyBudgetController{
                 return;
             }
 
-            if (!categoryBudgets){
-                res.status(400).json({ error: 'Array of category budgets are required' });
+            if (!categoryBudgets || !Array.isArray(categoryBudgets)){
+                res.status(400).json({ error: 'Category budgets must be an array' });
                 return;
             }
 
@@ -116,6 +116,7 @@ export class MonthlyBudgetController{
                     return;
                 }
             } else{
+                res.status(400).json({ error: 'Month parameter is required' });
                 return;
             }
             
