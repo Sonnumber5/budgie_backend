@@ -1,18 +1,16 @@
 import pool from "../database";
 import { MonthlyBudget, MonthlyBudgetDTO } from "../types";
-import { CategoryBudgetDAO } from "./categoryBudget.dao";
 import { CategoryBudget } from "../types";
-import { CategoryBudgetQueries } from "../queries/categoryBudget.queries";
-import { MontlyBudgetQueries } from "../queries/monthlyBudget.queries";
+import { BudgetQueries } from "../queries/budget.queries";
 
-export class MonthlyBudgetDAO{
+export class BudgetDAO{
     
     async createMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
         const client = await pool.connect();
         try{
             await client.query('BEGIN');
 
-            const monthlyBudgetToCreate = await client.query<MonthlyBudget>(MontlyBudgetQueries.CREATE_MONTHLY_BUDGET, [monthlyBudgetDTO.userId, monthlyBudgetDTO.month, monthlyBudgetDTO.expectedIncome]);
+            const monthlyBudgetToCreate = await client.query<MonthlyBudget>(BudgetQueries.CREATE_MONTHLY_BUDGET, [monthlyBudgetDTO.userId, monthlyBudgetDTO.month, monthlyBudgetDTO.expectedIncome]);
             const id = monthlyBudgetToCreate.rows[0].id;
             const month = monthlyBudgetToCreate.rows[0].month;
             const expectedIncome = monthlyBudgetToCreate.rows[0].expectedIncome;
@@ -24,7 +22,7 @@ export class MonthlyBudgetDAO{
             if (categoryBudgetsDTOs.length > 0){
                 for (let i = 0; i < categoryBudgetsDTOs.length; i++) {
                     const current = categoryBudgetsDTOs[i];
-                    const newCategoryBudget = await client.query<CategoryBudget>(CategoryBudgetQueries.CREATE_CATEGORY_BUDGET, [id, current.categoryId, current.budgetedAmount]);
+                    const newCategoryBudget = await client.query<CategoryBudget>(BudgetQueries.CREATE_CATEGORY_BUDGET, [id, current.categoryId, current.budgetedAmount]);
                     categoryBudgets.push(newCategoryBudget.rows[0])
                 }
             }
@@ -51,7 +49,17 @@ export class MonthlyBudgetDAO{
     }
 
     async findMonthlyBudgetByMonth(userId: number, month: string): Promise<MonthlyBudget | null>{
-        const result = await pool.query<MonthlyBudget>(MontlyBudgetQueries.FIND_MONTHLY_BUDGET, [userId, month]);
+        const result = await pool.query<MonthlyBudget>(BudgetQueries.FIND_MONTHLY_BUDGET_BY_MONTH, [userId, month]);
         return result.rows[0] ?? null;
+    }
+
+    async findMonthlyBudgetById(userId: number, id: number): Promise<MonthlyBudget | null>{
+        const result = await pool.query<MonthlyBudget>(BudgetQueries.FIND_MONTHLY_BUDGET_BY_ID, [userId, id]);
+        return result.rows[0] ?? null;
+    }
+
+    async findCategoryBudgetsByMonthlyBudgetId(userId: number, id: number): Promise<CategoryBudget[]>{
+        const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGETS_BY_MONTHLY_BUDGET_ID, [userId, id]);
+        return result.rows;
     }
 }

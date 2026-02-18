@@ -127,6 +127,7 @@ export interface CategoryBudget{
     id: number,
     monthlyBudgetId: number,
     categoryId: number,
+    categoryName: string,
     budgetedAmount: number,
     createdAt: string,
     updatedAt: string
