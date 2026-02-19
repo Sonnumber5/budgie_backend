@@ -1,6 +1,6 @@
 import { CategoryDAO } from "../database_access/category.dao";
 import { BudgetDAO } from "../database_access/budget.dao";
-import { MonthlyBudget, MonthlyBudgetDTO } from "../types";
+import { CategoryBudget, CategoryBudgetDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
 import { AppError } from "../utils/AppError";
 
 export class BudgetService{
@@ -45,5 +45,38 @@ export class BudgetService{
         monthlyBudget.categoryBudgets = categoryBudgets;
 
         return monthlyBudget;
+    }
+
+    async updateMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
+        if (!monthlyBudgetDTO.id){
+            throw new AppError('Monthly budget id is required for update', 400);
+        }
+        
+        const existingMonthlyBudget = await this.budgetDAO.findMonthlyBudgetById(monthlyBudgetDTO.userId, monthlyBudgetDTO.id);
+
+        if (!existingMonthlyBudget){
+            throw new AppError('Monthly budget not found', 404);
+        }
+        for (const currentCategoryBudget of monthlyBudgetDTO.categoryBudgetDTOs){
+            const categoryExists = await this.categoryDAO.findCategoryById(currentCategoryBudget.userId, currentCategoryBudget.categoryId);
+            if (!categoryExists){
+                throw new AppError('Category not found', 404);
+            }
+            if (currentCategoryBudget.budgetedAmount <= 0){
+                throw new AppError('Budgeted amount must be a positive number', 400);
+            }
+        }
+        return await this.budgetDAO.updateMonthlyBudget(monthlyBudgetDTO);
+    }
+
+    async updateCategoryBudget(budgetedAmount: number, id: number, userId: number): Promise<CategoryBudget>{
+        return await this.budgetDAO.updateCategoryBudget(budgetedAmount, id, userId);
+    }
+
+    async deleteCategoryBudget(userId: number, id: number): Promise<void>{
+        const result = await this.budgetDAO.deleteCategoryBudget(userId, id);
+        if (!result){
+            throw new AppError('Category budget not found', 404);
+        }
     }
 }

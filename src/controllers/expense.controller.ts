@@ -40,6 +40,7 @@ export class ExpenseController{
 
             if (amount < 0){
                 res.status(400).json({ error: 'Amount must be a positive number' });
+                return;
             }
 
             if (!isValidDate(expenseDate)){
@@ -114,6 +115,7 @@ export class ExpenseController{
 
             if (isNaN(categoryId)){
                 res.status(400).json({ error: 'Invalid expense id' });
+                return;
             }
 
             const expense = await this.expenseService.getExpenseById(userId, categoryId);
@@ -167,6 +169,7 @@ export class ExpenseController{
 
             if (amount < 0){
                 res.status(400).json({ error: 'Amount must be a positive number' });
+                return;
             }
 
             if (!isValidDate(expenseDate)){
@@ -210,6 +213,7 @@ export class ExpenseController{
     
             if (isNaN(id)){
                 res.status(500).json({ error: 'Invalid expense id' });
+                return;
             }
     
             await this.expenseService.deleteExpense(userId, id);

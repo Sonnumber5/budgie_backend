@@ -8,6 +8,9 @@ export const BudgetQueries = {
     FIND_MONTHLY_BUDGET_BY_ID: `SELECT id, month, expected_income AS "expectedIncome", created_at AS "createdAt", updated_at AS "updatedAt" 
     FROM monthly_budgets WHERE user_id = $1 AND id = $2`,
 
+    UPDATE_MONTHLY_BUDGET: `UPDATE monthly_budgets SET expected_income = $1 WHERE id = $2 AND user_id = $3
+                            RETURNING id, month, expected_income AS "expectedIncome", created_at AS "createdAt", updated_at AS "updatedAt"`,
+
 
 
 
@@ -23,6 +26,26 @@ export const BudgetQueries = {
                             FROM category_budgets cb
                             JOIN monthly_budgets mb on mb.id = cb.monthly_budget_id
                             JOIN categories c on c.id = cb.category_id
-                            WHERE mb.user_id = $1 AND mb.month = $2`
+                            WHERE mb.user_id = $1 AND mb.month = $2`,
+    FIND_CATEGORY_BUDGET_BY_ID: `SELECT cb.id, cb.monthly_budget_id as "monthlyBudgetId", cb.category_id AS "categoryId", c.name as "categoryName", cb.budgeted_amount AS "budgetedAmount", cb.created_at AS "createdAt", cb.updated_at AS "updatedAt" 
+                            FROM category_budgets cb
+                            JOIN monthly_budgets mb on mb.id = cb.monthly_budget_id
+                            JOIN categories c on c.id = cb.category_id
+                            WHERE mb.user_id = $1 AND cb.id = $2`,
+    UPDATE_CATEGORY_BUDGET: `UPDATE category_budgets cb
+                            SET budgeted_amount = $1
+                            FROM monthly_budgets mb, categories c
+                            WHERE cb.monthly_budget_id = mb.id 
+                            AND cb.category_id = c.id
+                            AND cb.id = $2
+                            AND mb.user_id = $3
+                            RETURNING cb.id, cb.monthly_budget_id AS "monthlyBudgetId", 
+                            cb.category_id AS "categoryId", c.name AS "categoryName", 
+                            cb.budgeted_amount AS "budgetedAmount", cb.created_at AS "createdAt", cb.updated_at AS "updatedAt"`,
+    DELETE_CATEGORY_BUDGET: `DELETE FROM category_budgets cb
+                            USING monthly_budgets mb 
+                            WHERE cb.monthly_budget_id = mb.id
+                            AND mb.user_id = $1 
+                            AND cb.id = $2`
 
 }
