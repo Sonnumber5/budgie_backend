@@ -10,5 +10,9 @@ export const SavingsFundQueries = {
     FIND_SAVINGS_FUND_BY_ID: 
     `SELECT id, name, goal, balance, archived_at AS "archivedAt", created_at AS "createdAt", updated_at AS "updatedAt"
     FROM savings_funds
-    WHERE user_id = $1 AND id = $2`
+    WHERE user_id = $1 AND id = $2`,
+    FIND_SAVINGS_FUNDS:
+    `SELECT id, name, goal, balance, archived_at AS "archivedAt", created_at AS "createdAt", updated_at AS "updatedAt"
+    FROM savings_funds
+    WHERE user_id = $1`
 }

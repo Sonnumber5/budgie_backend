@@ -53,7 +53,7 @@ export class SavingsFundController{
                 res.status(400).json({ error: 'Invalid savings fund id' });
                 return;
             }
-            const result = await this.savingsFundService.getSavingsfundById(userId, id);
+            const result = await this.savingsFundService.getSavingsFundById(userId, id);
             res.status(200).json({ 
                 message: 'Successfully retrieved savings fund',
                 savingsFund: result
@@ -61,6 +61,26 @@ export class SavingsFundController{
         }catch(error: any){
             console.log('Error retrieving savings fund', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve savings fund' });
+        }
+    }
+
+    getSavingsFunds = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const result = await this.savingsFundService.getSavingsFunds(userId);
+            res.status(200).json({ 
+                message: 'Successfully retrieved savings funds',
+                savingsFunds: result
+            });
+        }catch(error: any){
+            console.log('Error retrieving savings funds', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve savings funds' });
         }
     }
 }
