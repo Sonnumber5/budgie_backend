@@ -243,6 +243,32 @@ export class MonthlyBudgetController{
         }
     }
 
+    getCategoryBudgetById = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+
+            if (isNaN(id)){
+                res.status(400).json({ error: 'Invalid monthly budget id' });
+                return;
+            }
+
+            const result = await this.budgetService.getCategoryBudgetById(userId, id);
+            res.status(200).json({ 
+                message: 'Successfully retrieved category budget', 
+                categoryBudget: result
+            });
+        }catch(error: any){
+            console.log('Error retrieving category budget', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve category budget' });
+        }
+    }
+
     deleteCategoryBudget = async (req: Request, res: Response): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

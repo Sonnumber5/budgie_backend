@@ -10,9 +10,9 @@ export const BudgetRoutes = (monthlyBudgetController: MonthlyBudgetController) =
     router.get('/budgets/monthly/', authenticate, monthlyBudgetController.getBudgetByMonth);
     router.put('/budgets/monthly/:id', authenticate, monthlyBudgetController.updateMonthlyBudget);
     router.delete('/budgets/monthly/:id', authenticate, monthlyBudgetController.deleteMonthlyBudget);
-    router.delete('/budgets/categories/:id', authenticate, monthlyBudgetController.deleteCategoryBudget);
+    router.get('/budgets/categories/:id', authenticate, monthlyBudgetController.getCategoryBudgetById);
     router.put('/budgets/categories/:id', authenticate, monthlyBudgetController.updateCategoryBudget);
-
+    router.delete('/budgets/categories/:id', authenticate, monthlyBudgetController.deleteCategoryBudget);
 
     return router;
 }

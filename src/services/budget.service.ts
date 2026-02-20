@@ -57,8 +57,20 @@ export class BudgetService{
         }
     }
 
+    async getCategoryBudgetById(userId: number, id: number): Promise<CategoryBudget>{
+        const result = await this.budgetDAO.findCategoryBudgetById(userId, id);
+        if (!result){
+            throw new AppError('Category budget not found', 404);
+        }
+        return result;
+    }
+
     async updateCategoryBudget(budgetedAmount: number, id: number, userId: number): Promise<CategoryBudget>{
-        return await this.budgetDAO.updateCategoryBudget(budgetedAmount, id, userId);
+        const result = await this.budgetDAO.updateCategoryBudget(budgetedAmount, id, userId);
+        if (!result){
+            throw new AppError('Category budget not found', 404);
+        }
+        return result;
     }
 
     async deleteCategoryBudget(userId: number, id: number): Promise<void>{
