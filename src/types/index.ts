@@ -141,3 +141,24 @@ export interface CategoryBudgetDTO{
     categoryName?: string,
     budgetedAmount: number
 }
+
+
+
+//---------SAVINGS FUNDS---------//
+
+export interface SavingsFund{
+    id: number,
+    userId: number,
+    name: string,
+    goal: number,
+    balance: number,
+    archivedAt: string
+}
+
+export interface SavingsFundDTO{
+    id?: number,
+    name: string,
+    goal: number,
+    balance?: number,
+    archivedAt?: string
+}
