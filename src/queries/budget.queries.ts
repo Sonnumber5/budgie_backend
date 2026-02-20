@@ -10,6 +10,7 @@ export const BudgetQueries = {
 
     UPDATE_MONTHLY_BUDGET: `UPDATE monthly_budgets SET expected_income = $1 WHERE id = $2 AND user_id = $3
                             RETURNING id, month, expected_income AS "expectedIncome", created_at AS "createdAt", updated_at AS "updatedAt"`,
+    DELETE_MONTHLY_BUDGET: `DELETE FROM monthly_budgets WHERE user_id = $1 AND id = $2`,
 
 
 

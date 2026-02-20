@@ -222,6 +222,27 @@ export class MonthlyBudgetController{
         }
     }
 
+    deleteMonthlyBudget = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+            if (isNaN(id)){
+                res.status(400).json({ error: 'Invalid monthly budget id' });
+                return;
+            }
+            await this.budgetService.deleteMonthlyBudget(userId, id);
+            res.status(200).json({ message: 'Monthly budget successfully deleted' });
+        }catch(error: any){
+            console.log('Error deleting monthly budget', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete monthly budget' });
+        }
+    }
+
     deleteCategoryBudget = async (req: Request, res: Response): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

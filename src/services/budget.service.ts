@@ -50,6 +50,13 @@ export class BudgetService{
         return await this.budgetDAO.updateMonthlyBudget(monthlyBudgetDTO);
     }
 
+    async deleteMonthlyBudget(userId: number, id: number): Promise<void>{
+        const result = await this.budgetDAO.deleteMonthlyBudget(userId, id);
+        if (!result){
+            throw new AppError('Budget not found', 404);
+        }
+    }
+
     async updateCategoryBudget(budgetedAmount: number, id: number, userId: number): Promise<CategoryBudget>{
         return await this.budgetDAO.updateCategoryBudget(budgetedAmount, id, userId);
     }

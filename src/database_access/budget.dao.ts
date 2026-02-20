@@ -57,16 +57,6 @@ export class BudgetDAO{
         return result.rows[0] ?? null;
     }
 
-    async findCategoryBudgetsByMonthlyBudgetId(userId: number, id: number): Promise<CategoryBudget[]>{
-        const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGETS_BY_MONTHLY_BUDGET_ID, [userId, id]);
-        return result.rows;
-    }
-
-    async findCategoryBudgetById(userId: number, id: number): Promise<CategoryBudget>{
-        const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGET_BY_ID, [userId, id]);
-        return result.rows[0];
-    }
-
     async updateMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
         const client = await pool.connect();
         try{
@@ -106,6 +96,21 @@ export class BudgetDAO{
         }finally{
             client.release();
         }
+    }
+
+    async deleteMonthlyBudget(userId: number, id: number): Promise<boolean>{
+        const result = await pool.query<MonthlyBudget>(BudgetQueries.DELETE_MONTHLY_BUDGET, [userId, id]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
+
+    async findCategoryBudgetsByMonthlyBudgetId(userId: number, id: number): Promise<CategoryBudget[]>{
+        const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGETS_BY_MONTHLY_BUDGET_ID, [userId, id]);
+        return result.rows;
+    }
+
+    async findCategoryBudgetById(userId: number, id: number): Promise<CategoryBudget>{
+        const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGET_BY_ID, [userId, id]);
+        return result.rows[0];
     }
 
     async updateCategoryBudget(budgetedAmount: number, id: number, userId: number): Promise<CategoryBudget>{
