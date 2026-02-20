@@ -115,7 +115,7 @@ export interface MonthlyBudget{
 export interface MonthlyBudgetDTO{
     id?: number, 
     userId: number,
-    month: string,
+    month?: string,
     expectedIncome: number,
     categoryBudgetDTOs: CategoryBudgetDTO[],
 }
@@ -136,7 +136,8 @@ export interface CategoryBudget{
 export interface CategoryBudgetDTO{
     id?: number,
     userId: number,
-    monthlyBudgetId: number,
+    monthlyBudgetId?: number,
     categoryId: number,
+    categoryName?: string,
     budgetedAmount: number
 }

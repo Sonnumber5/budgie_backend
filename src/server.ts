@@ -60,7 +60,7 @@ const expenseService = new ExpenseService(expenseDAO, categoryDAO);
 const expenseController = new ExpenseController(expenseService, categoryService);
 const budgetDAO = new BudgetDAO();
 const budgetService = new BudgetService(budgetDAO, categoryDAO);
-const budgetController = new MonthlyBudgetController(budgetService);
+const budgetController = new MonthlyBudgetController(budgetService, categoryService);
 
 
 console.log(process.env.MY_SQL_DB_HOST);

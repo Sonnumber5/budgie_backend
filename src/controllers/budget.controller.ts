@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { BudgetService } from "../services/budget.service";
-import { AuthRequest, CategoryBudgetDTO, MonthlyBudgetDTO } from "../types";
+import { AuthRequest, CategoryBudgetDTO, CategoryDTO, MonthlyBudgetDTO } from "../types";
 import { getMonth, isValidDate } from "../utils/date";
+import { CategoryService } from "../services/category.service";
 
 export class MonthlyBudgetController{
-    constructor(private budgetService: BudgetService){}
+    constructor(private budgetService: BudgetService, private categoryService: CategoryService){}
 
     createMonthlyBudget = async (req: Request, res: Response): Promise<void> => {
         try{
@@ -44,10 +45,21 @@ export class MonthlyBudgetController{
             const categoryBudgetDTOs: CategoryBudgetDTO[] = []
 
             for (const categoryBudget of categoryBudgets){
+                if (!categoryBudget.categoryName || !categoryBudget.budgetedAmount){
+                    res.status(400).json({ error: 'Each category budget must have categoryName and budgetedAmount' });
+                    return;
+                }
+                
+                if (categoryBudget.budgetedAmount <= 0){
+                    res.status(400).json({ error: 'Budgeted amounts must be positive' });
+                    return;
+                }
+                const category = await this.categoryService.getCategoryByName(userId, categoryBudget.categoryName);
+
                 const newCategoryBudgetDTO: CategoryBudgetDTO = {
                     userId,
-                    monthlyBudgetId: categoryBudget.monthlyBudgetId,
-                    categoryId: categoryBudget.categoryId,
+                    //monthlyBudgetId: categoryBudget.monthlyBudgetId,
+                    categoryId: category.id,
                     budgetedAmount: categoryBudget.budgetedAmount
                 };
                 categoryBudgetDTOs.push(newCategoryBudgetDTO);
@@ -139,7 +151,7 @@ export class MonthlyBudgetController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { month, expectedIncome, categoryBudgets } = req.body;
+            const { expectedIncome, categoryBudgets } = req.body;
             const id = parseInt(req.params.id as string);
 
             if (isNaN(id)){
@@ -147,8 +159,8 @@ export class MonthlyBudgetController{
                 return;
             }
 
-            if (!expectedIncome || !month){
-                res.status(400).json({ error: 'Expected income and month are required' });
+            if (!expectedIncome){
+                res.status(400).json({ error: 'Expected income is required' });
                 return;
             }
 
@@ -167,23 +179,25 @@ export class MonthlyBudgetController{
                 return;
             }
 
-            if (!isValidDate(month)){
-                res.status(400).json({ error: 'Invalid date format' });
-                return;
-            }
-
             const categoryBudgetDTOs: CategoryBudgetDTO[] = []
 
             for (const categoryBudget of categoryBudgets){
-                if (!categoryBudget.categoryId || categoryBudget.budgetedAmount === undefined){
-                    res.status(400).json({ error: 'Each category budget must have categoryId and budgetedAmount' });
+                const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
+                if (!categoryBudget.categoryName){
+                    res.status(400).json({ error: 'Category name is required' });
                     return;
                 }
+                if (categoryBudget.budgetedAmount <= 0){
+                    res.status(400).json({ error: 'Budgeted amount must be a positive number' });
+                    return;
+                }
+
                 const newCategoryBudgetDTO: CategoryBudgetDTO = {
                     id: categoryBudget.id,
                     userId,
                     monthlyBudgetId: id,
-                    categoryId: categoryBudget.categoryId,
+                    categoryId: category.id,
+                    categoryName: category.name,
                     budgetedAmount: categoryBudget.budgetedAmount
                 };
                 categoryBudgetDTOs.push(newCategoryBudgetDTO);
@@ -192,7 +206,6 @@ export class MonthlyBudgetController{
             const monthlyBudgetToUpdate: MonthlyBudgetDTO = {
                 id,
                 userId,
-                month,
                 expectedIncome,
                 categoryBudgetDTOs
             }

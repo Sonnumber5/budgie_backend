@@ -29,16 +29,26 @@ export class CategoryService{
         return category;
     }
 
-    async getCategoryByName(userId: number, name: string): Promise<Category>{
-        const category = await this.categoryDAO.findCategoryByName(userId, name);
+    async getOrCreateCategory(userId: number, name: string): Promise<Category>{
+        let category = await this.categoryDAO.findCategoryByName(userId, name);
         if (!category){
-            throw new AppError("Category not found", 404);
+            category = await this.categoryDAO.createCategory({userId, name});
+            if (!category){
+                throw new AppError("Failed to create category", 500);
+            }
         }
-
         return category;
     }
 
-    async updateCategory(categoryDTO: CategoryDTO): Promise<Category>{
+    async getCategoryByName(userId: number, name: string): Promise<Category>{
+        let category = await this.categoryDAO.findCategoryByName(userId, name);
+        if (!category){
+            throw new AppError("Failed to create category", 500);
+        }
+        return category;
+    }
+
+    async updateCategory(categoryDTO: CategoryDTO): Promise<Category | null>{
         const existingCategory = await this.categoryDAO.findCategoryByName(categoryDTO.userId, categoryDTO.name);
         
         if (existingCategory){
@@ -46,7 +56,7 @@ export class CategoryService{
         }
 
         const updatedCategory = await this.categoryDAO.updateCategory(categoryDTO);
-        return updatedCategory;
+        return updatedCategory ?? null;
     }
 
     async deleteCategory(id: number, userId: number): Promise<void>{

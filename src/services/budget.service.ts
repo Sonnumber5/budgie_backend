@@ -1,25 +1,15 @@
 import { CategoryDAO } from "../database_access/category.dao";
 import { BudgetDAO } from "../database_access/budget.dao";
-import { CategoryBudget, CategoryBudgetDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
+import { CategoryBudget, CategoryBudgetDTO, CategoryDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
 import { AppError } from "../utils/AppError";
 
 export class BudgetService{
     constructor(private budgetDAO: BudgetDAO, private categoryDAO: CategoryDAO){}
 
     async createMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
-        const existingMonthlyBudget = await this.budgetDAO.findMonthlyBudgetByMonth(monthlyBudgetDTO.userId, monthlyBudgetDTO.month);
+        const existingMonthlyBudget = await this.budgetDAO.findMonthlyBudgetByMonth(monthlyBudgetDTO.userId, monthlyBudgetDTO.month!);
         if (existingMonthlyBudget){
             throw new AppError('Monthly budget already exists', 409);
-        }
-
-        for (const categoryBudget of monthlyBudgetDTO.categoryBudgetDTOs){
-            const categoryExists = await this.categoryDAO.findCategoryById(categoryBudget.userId, categoryBudget.categoryId);
-            if (!categoryExists){
-                throw new AppError('Category not found', 404);
-            }
-            if (categoryBudget.budgetedAmount <= 0){
-                throw new AppError('Budgeted amount must be a positive number', 400);
-            }
         }
         
         return await this.budgetDAO.createMonthlyBudget(monthlyBudgetDTO);
@@ -56,15 +46,6 @@ export class BudgetService{
 
         if (!existingMonthlyBudget){
             throw new AppError('Monthly budget not found', 404);
-        }
-        for (const currentCategoryBudget of monthlyBudgetDTO.categoryBudgetDTOs){
-            const categoryExists = await this.categoryDAO.findCategoryById(currentCategoryBudget.userId, currentCategoryBudget.categoryId);
-            if (!categoryExists){
-                throw new AppError('Category not found', 404);
-            }
-            if (currentCategoryBudget.budgetedAmount <= 0){
-                throw new AppError('Budgeted amount must be a positive number', 400);
-            }
         }
         return await this.budgetDAO.updateMonthlyBudget(monthlyBudgetDTO);
     }

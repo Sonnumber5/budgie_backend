@@ -62,9 +62,9 @@ export class BudgetDAO{
         return result.rows;
     }
 
-    async findCategoryBudgetById(userId: number, id: number): Promise<CategoryBudget[]>{
+    async findCategoryBudgetById(userId: number, id: number): Promise<CategoryBudget>{
         const result = await pool.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGET_BY_ID, [userId, id]);
-        return result.rows;
+        return result.rows[0];
     }
 
     async updateMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
