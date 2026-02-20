@@ -23,7 +23,11 @@ import { ExpenseRoutes } from './routes/expense.routes';
 import { BudgetDAO } from './database_access/budget.dao';
 import { BudgetService } from './services/budget.service';
 import { MonthlyBudgetController } from './controllers/budget.controller';
-import { BudgetRoutes } from './routes/Budget.routes';
+import { BudgetRoutes } from './routes/budget.routes';
+import { SavingsFundDAO } from './database_access/savingsFund.dao';
+import { SavingsFundService } from './services/savingsFund.service';
+import { SavingsFundController } from './controllers/savingsFund.controller';
+import { SavingsFundRoutes } from './routes/savingsFund.routes';
 
 require("dotenv").config();
 
@@ -61,6 +65,9 @@ const expenseController = new ExpenseController(expenseService, categoryService)
 const budgetDAO = new BudgetDAO();
 const budgetService = new BudgetService(budgetDAO, categoryDAO);
 const budgetController = new MonthlyBudgetController(budgetService, categoryService);
+const savingsFundDAO = new SavingsFundDAO();
+const savingsFundService = new SavingsFundService(savingsFundDAO);
+const savingsFundController = new SavingsFundController(savingsFundService);
 
 
 console.log(process.env.MY_SQL_DB_HOST);
@@ -73,7 +80,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController));
+app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), SavingsFundRoutes(savingsFundController));
 
 // Start the Express server
 app.listen(port, () => {
