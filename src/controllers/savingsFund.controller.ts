@@ -83,4 +83,40 @@ export class SavingsFundController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve savings funds' });
         }
     }
+
+    updateSavingsFund = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const { name, goal } = req.body;
+            const id = parseInt(req.params.id as string);
+            
+            if (!name || !goal){
+                res.status(400).json({ error: 'name and goal are required' });
+                return;
+            }
+            const parsedGoal = Number(goal);
+            if (isNaN(parsedGoal) || parsedGoal <= 0) {
+                res.status(400).json({ error: 'Goal must be a positive number' });
+                return;
+            }
+            const fundToUpdate: SavingsFundDTO = {
+                id,
+                name,
+                goal
+            }
+            const result = await this.savingsFundService.updateSavingsFund(userId, fundToUpdate);
+            res.status(200).json({ 
+                message: 'Successfully updated savings fund',
+                savingsFund: result
+             });
+        }catch(error: any){
+            console.log('Error updated savings fund', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update savings fund' });
+        }
+    }
 }

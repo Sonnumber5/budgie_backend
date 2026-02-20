@@ -24,4 +24,15 @@ export class SavingsFundService{
     async getSavingsFunds(userId: number): Promise<SavingsFund[]>{
         return await this.savingsFundDAO.findSavingsFunds(userId);
     }
+
+    async updateSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
+        if (!savingsFundDTO.id){
+            throw new AppError('Savings fund id required', 404);
+        }
+        const result = await this.savingsFundDAO.updateSavingsFund(userId, savingsFundDTO);
+        if (!result){
+            throw new AppError('Savings fund not found', 404);
+        }
+        return result;
+    }
 }

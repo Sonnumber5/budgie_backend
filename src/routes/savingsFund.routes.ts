@@ -8,6 +8,7 @@ export const SavingsFundRoutes = (savingsFundController: SavingsFundController) 
     router.post('/savings-funds', authenticate, savingsFundController.createSavingsFund);
     router.get('/savings-funds/:id', authenticate, savingsFundController.getSavingsFundById);
     router.get('/savings-funds', authenticate, savingsFundController.getSavingsFunds);
+    router.put('/savings-funds/:id', authenticate, savingsFundController.updateSavingsFund);
     
     return router;
 }

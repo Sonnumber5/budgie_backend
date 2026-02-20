@@ -23,4 +23,9 @@ export class SavingsFundDAO{
         const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_SAVINGS_FUNDS, [userId]);
         return result.rows;
     }
+
+    async updateSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND, [savingsFundDTO.name, savingsFundDTO.goal, userId, savingsFundDTO.id]);
+        return result.rows[0];
+    }
 }
