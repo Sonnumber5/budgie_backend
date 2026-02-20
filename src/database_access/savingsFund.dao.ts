@@ -19,8 +19,13 @@ export class SavingsFundDAO{
         return result.rows[0];
     }
 
-    async findSavingsFunds(userId: number): Promise<SavingsFund[]>{
-        const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_SAVINGS_FUNDS, [userId]);
+    async findActiveSavingsFunds(userId: number): Promise<SavingsFund[]>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_ACTIVE_SAVINGS_FUNDS, [userId]);
+        return result.rows;
+    }
+
+    async findArchivedSavingsFunds(userId: number): Promise<SavingsFund[]>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_ARCHIVED_SAVINGS_FUNDS, [userId]);
         return result.rows;
     }
 

@@ -72,8 +72,10 @@ export class SavingsFundController{
                 return;
             }
             const userId = authRequest.user.userId;
+            const includeArchived = req.query.includeArchived === "true";
 
-            const result = await this.savingsFundService.getSavingsFunds(userId);
+            const result = await this.savingsFundService.getSavingsFunds(userId, includeArchived);
+
             res.status(200).json({ 
                 message: 'Successfully retrieved savings funds',
                 savingsFunds: result

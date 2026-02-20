@@ -21,13 +21,21 @@ export class SavingsFundService{
         return result;
     }
 
-    async getSavingsFunds(userId: number): Promise<SavingsFund[]>{
-        return await this.savingsFundDAO.findSavingsFunds(userId);
+    async getSavingsFunds(userId: number, includeArchived: boolean): Promise<SavingsFund[]>{
+        if (includeArchived === true){
+            return await this.savingsFundDAO.findArchivedSavingsFunds(userId);
+        } else{
+            return await this.savingsFundDAO.findActiveSavingsFunds(userId);
+        }
     }
 
     async updateSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
         if (!savingsFundDTO.id){
             throw new AppError('Savings fund id required', 404);
+        }
+        const activeSavingsFund = await this.savingsFundDAO.findSavingsFundByName(userId, savingsFundDTO.name);
+        if (activeSavingsFund){
+            throw new AppError('Active savings fund already exists', 409);
         }
         const result = await this.savingsFundDAO.updateSavingsFund(userId, savingsFundDTO);
         if (!result){
