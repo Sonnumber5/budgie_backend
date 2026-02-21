@@ -28,6 +28,10 @@ import { SavingsFundDAO } from './database_access/savingsFund.dao';
 import { SavingsFundService } from './services/savingsFund.service';
 import { SavingsFundController } from './controllers/savingsFund.controller';
 import { SavingsFundRoutes } from './routes/savingsFund.routes';
+import { FundTransactionDAO } from './database_access/fundTransaction.dao';
+import { FundTransactionService } from './services/fundTransaction.service';
+import { FundTransactionController } from './controllers/fundTransaction.controller';
+import { FundTransactionRoutes } from './routes/fundTransaction.routes';
 
 require("dotenv").config();
 
@@ -65,8 +69,11 @@ const expenseController = new ExpenseController(expenseService, categoryService)
 const budgetDAO = new BudgetDAO();
 const budgetService = new BudgetService(budgetDAO, categoryDAO);
 const budgetController = new MonthlyBudgetController(budgetService, categoryService);
+const fundTransactionDAO = new FundTransactionDAO();
 const savingsFundDAO = new SavingsFundDAO();
-const savingsFundService = new SavingsFundService(savingsFundDAO);
+const fundTransactionService = new FundTransactionService(fundTransactionDAO, savingsFundDAO);
+const fundTransactionController = new FundTransactionController(fundTransactionService);
+const savingsFundService = new SavingsFundService(savingsFundDAO, fundTransactionDAO);
 const savingsFundController = new SavingsFundController(savingsFundService);
 
 
@@ -80,7 +87,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), SavingsFundRoutes(savingsFundController));
+app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), SavingsFundRoutes(savingsFundController), FundTransactionRoutes(fundTransactionController));
 
 // Start the Express server
 app.listen(port, () => {

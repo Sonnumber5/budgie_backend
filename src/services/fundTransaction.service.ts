@@ -1,0 +1,30 @@
+import { FundTransactionDAO } from "../database_access/fundTransaction.dao";
+import { SavingsFundDAO } from "../database_access/savingsFund.dao";
+import { FundTransaction, FundTransactionDTO, TransactionType } from "../types";
+import { AppError } from "../utils/AppError";
+
+export class FundTransactionService{
+    constructor(private fundTransactionDAO: FundTransactionDAO, private savingsFundDAO: SavingsFundDAO){}
+
+    async createFundTransaction(userId: number, fundTransactionDTO: FundTransactionDTO): Promise<FundTransaction>{
+        const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, fundTransactionDTO.savingsFundId);
+        if (!existingFund){
+            throw new AppError('Savings fund not found', 404);
+        }
+        if (fundTransactionDTO.transactionType === "expenditure"){
+            const remainingBalance = existingFund.balance - fundTransactionDTO.amount;
+            if (remainingBalance < 0){
+                throw new AppError('Insufficient funds', 400);
+            }
+        }
+        return await this.fundTransactionDAO.createFundTransaction(userId, fundTransactionDTO);
+    }
+
+    async getFundTransactions(userId: number, fundId: number): Promise<FundTransaction[]>{
+        const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, fundId);
+        if (!existingFund){
+            throw new AppError('Savings fund not found', 404);
+        }
+        return await this.fundTransactionDAO.findFundTransactions(userId, fundId);
+    }
+}

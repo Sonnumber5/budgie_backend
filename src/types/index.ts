@@ -148,7 +148,7 @@ export interface CategoryBudgetDTO{
 
 export interface SavingsFund{
     id: number,
-    userId: number,
+    //userId: number,
     name: string,
     goal: number,
     balance: number,
@@ -162,3 +162,31 @@ export interface SavingsFundDTO{
     balance?: number,
     archivedAt?: string
 }
+
+
+
+//---------SAVINGS FUND TRANSACTIONS---------//
+
+export type TransactionType = 'contribution' | 'expenditure' | 'initial_balance' | 'transfer_in' | 'transfer_out' | 'adjustment'
+
+export interface FundTransaction{
+    id: number, 
+    savingsFundId: number,
+    transactionType: TransactionType,
+    amount: number,
+    description: string,
+    transactionDate: string,
+    relatedFundId?: number,
+    createdAt: string
+}
+
+export interface FundTransactionDTO{
+    id?: number, 
+    savingsFundId: number,
+    transactionType: TransactionType,
+    amount: number,
+    description: string,
+    transactionDate: string,
+    relatedFundId?: number,
+}
+
