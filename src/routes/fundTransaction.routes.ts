@@ -6,7 +6,8 @@ export const FundTransactionRoutes = (fundtransactionController: FundTransaction
     const router = Router();
 
     router.post('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.createFundTransaction);
-    router.get('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.getFundTransaction);
+    router.get('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.getFundTransactions);
+    router.get('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.getFundTransactionById);
 
     return router;
 }

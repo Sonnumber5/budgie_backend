@@ -1,5 +1,6 @@
 import { FundTransactionDAO } from "../database_access/fundTransaction.dao";
 import { SavingsFundDAO } from "../database_access/savingsFund.dao";
+import { FundTransactionQueries } from "../queries/fundTransaction.queries";
 import { FundTransaction, FundTransactionDTO, TransactionType } from "../types";
 import { AppError } from "../utils/AppError";
 
@@ -26,5 +27,17 @@ export class FundTransactionService{
             throw new AppError('Savings fund not found', 404);
         }
         return await this.fundTransactionDAO.findFundTransactions(userId, fundId);
+    }
+
+    async getFundTransactionById(userId: number, fundId: number, transactionId: number): Promise<FundTransaction>{
+        const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, fundId);
+        if (!existingFund){
+            throw new AppError('Fund not found', 404);
+        }
+        const result = await this.fundTransactionDAO.findFundTransactionById(userId, transactionId);
+        if (!result){
+            throw new AppError('Transaction not found', 404);
+        }
+        return result;
     }
 }

@@ -61,7 +61,7 @@ export class FundTransactionController{
         }
     }
 
-    getFundTransaction = async (req: Request, res: Response): Promise<void> => {
+    getFundTransactions = async (req: Request, res: Response): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -84,6 +84,38 @@ export class FundTransactionController{
         }catch(error: any){
             console.log('Error retrieving transactions', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transactions' });
+        }
+    }
+
+    getFundTransactionById = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const transactionId = parseInt(req.params.transactionId as string);
+            const fundId = parseInt(req.params.fundId as string);
+
+            if (isNaN(transactionId) || transactionId <= 0){
+                res.status(400).json({ error: 'Invalid transaction id format' });
+                return;
+            }
+
+            if (isNaN(fundId) || fundId <= 0){
+                res.status(400).json({ error: 'Invalid fund id format' });
+                return;
+            }
+
+            const result = await this.fundTransactionService.getFundTransactionById(userId, fundId, transactionId);
+            res.status(200).json({ 
+                message: 'Successfully retrieved transaction',
+                fundTransaction: result
+            });
+        }catch(error: any){
+            console.log('Error retrieving transaction', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transaction' });
         }
     }
 }
