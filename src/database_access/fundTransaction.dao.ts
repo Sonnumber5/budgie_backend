@@ -29,8 +29,8 @@ export class FundTransactionDAO{
         return result.rows;
     }
 
-    async findFundTransactionById(userId: number, id: number): Promise<FundTransaction>{
-        const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, id]);
+    async findFundTransactionById(userId: number, id: number, savingsFundId: number): Promise<FundTransaction>{
+        const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, id, savingsFundId]);
         return result.rows[0];
     }
 
@@ -38,7 +38,7 @@ export class FundTransactionDAO{
         const client = await pool.connect();
         try{
             await client.query('BEGIN');//begin the transaction
-            const originalTransaction = (await client.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, fundTransactionDTO.id])).rows[0];
+            const originalTransaction = (await client.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, fundTransactionDTO.id, fundTransactionDTO.savingsFundId])).rows[0];
             const reverseAmount = originalTransaction.transactionType === 'expenditure' ? originalTransaction.amount : -originalTransaction.amount;
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [reverseAmount, userId, originalTransaction.savingsFundId]);
             const newAmount = fundTransactionDTO.transactionType === 'contribution' ? fundTransactionDTO.amount : -fundTransactionDTO.amount;
@@ -56,6 +56,26 @@ export class FundTransactionDAO{
             console.error('Failed to create transaction', error);
             throw error;
         } finally{
+            client.release();
+        }
+    }
+
+    async deleteFundTransaction(userId: number,  fundTransaction: FundTransaction): Promise<boolean>{
+        const client = await pool.connect();
+        try{
+            await client.query('BEGIN');
+            
+            const reverseAmount = fundTransaction.transactionType === 'expenditure' ? fundTransaction.amount : -fundTransaction.amount;
+            await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [reverseAmount, userId, fundTransaction.savingsFundId]);
+            const result = await client.query<FundTransaction>(FundTransactionQueries.DELETE_FUND_TRANSACTION, [userId, fundTransaction.id, fundTransaction.savingsFundId]);
+            await client.query('COMMIT');
+
+            return result.rowCount !== null && result.rowCount > 0;
+        }catch(error){
+            await client.query('ROLLBACK');
+            console.error('Failed to delete transaction', error);
+            throw error;
+        }finally{
             client.release();
         }
     }

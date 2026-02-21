@@ -108,7 +108,7 @@ export class FundTransactionController{
                 return;
             }
 
-            const result = await this.fundTransactionService.getFundTransactionById(userId, fundId, transactionId);
+            const result = await this.fundTransactionService.getFundTransactionById(userId, transactionId, fundId);
             res.status(200).json({ 
                 message: 'Successfully retrieved transaction',
                 fundTransaction: result
@@ -178,6 +178,37 @@ export class FundTransactionController{
         }catch(error: any){
             console.log('Error updating transaction', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update transaction' });
+        }
+    }
+
+    deleteFundTransaction = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const transactionId = parseInt(req.params.transactionId as string);
+            const fundId = parseInt(req.params.fundId as string);
+
+            if (isNaN(transactionId) || transactionId <= 0){
+                res.status(400).json({ error: 'Invalid transaction id format' });
+                return;
+            }
+
+            if (isNaN(fundId) || fundId <= 0){
+                res.status(400).json({ error: 'Invalid fund id format' });
+                return;
+            }
+
+            await this.fundTransactionService.deleteFundTransaction(userId, transactionId, fundId);
+            res.status(200).json({ 
+                message: 'Successfully deleted transaction',
+            });
+        }catch(error: any){
+            console.log('Error deleting transaction', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete transaction' });
         }
     }
 }

@@ -9,6 +9,7 @@ export const FundTransactionRoutes = (fundtransactionController: FundTransaction
     router.get('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.getFundTransactions);
     router.get('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.getFundTransactionById);
     router.put('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.updateFundTransaction);
+    router.delete('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.deleteFundTransaction);
 
     return router;
 }
