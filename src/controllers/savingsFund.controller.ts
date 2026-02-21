@@ -121,4 +121,28 @@ export class SavingsFundController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update savings fund' });
         }
     }
+
+    deleteSavingsFund = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string)
+
+            if (isNaN(id)){
+                res.status(400).json({ error: 'Invalid savings fund id' });
+                return;
+            }
+
+            const deleted = await this.savingsFundService.deleteSavingsFund(userId, id);
+
+            res.status(200).json({ message: deleted ? 'Successfully deleted savings fund' : 'Successfully archived savings fund'});
+        }catch(error: any){
+            console.log('Error deleting savings fund', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete savings fund' });
+        }
+    }
 }

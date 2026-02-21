@@ -33,4 +33,14 @@ export class SavingsFundDAO{
         const result = await pool.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND, [savingsFundDTO.name, savingsFundDTO.goal, userId, savingsFundDTO.id]);
         return result.rows[0];
     }
+
+    async archiveSavingsFund(userId: number, id: number): Promise<boolean>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.ARCHIVE_FUND, [userId, id]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
+
+    async deleteSavingsFund(userId: number, id: number): Promise<boolean>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.DELETE_SAVINGS_FUND, [userId, id]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
 }

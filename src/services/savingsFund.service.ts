@@ -3,7 +3,7 @@ import { SavingsFund, SavingsFundDTO } from "../types";
 import { AppError } from "../utils/AppError";
 
 export class SavingsFundService{
-    constructor(private savingsFundDAO: SavingsFundDAO){}
+    constructor(private savingsFundDAO: SavingsFundDAO, private savingsFundTransactionDAO: SavingsFundTransactionDAO){}
 
     async createSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
         const activeSavingsFund = await this.savingsFundDAO.findSavingsFundByName(userId, savingsFundDTO.name);
@@ -42,5 +42,20 @@ export class SavingsFundService{
             throw new AppError('Savings fund not found', 404);
         }
         return result;
+    }
+
+    async deleteSavingsFund(userId: number, id: number): Promise<boolean>{
+        const existingSavingsFund = await this.savingsFundDAO.findSavingsFundById(userId, id);
+        if (!existingSavingsFund){
+            throw new AppError('Savings fund not found', 404);
+        }
+        const transactions = await this.savingsFundTransactionDAO.findTransactionsByFundId(userId, id);
+        if (transactions.length > 1){
+            await this.savingsFundDAO.archiveSavingsFund(userId, id);
+            return false;
+        } else{
+            await this.savingsFundDAO.deleteSavingsFund(userId, id);
+            return true;
+        }
     }
 }
