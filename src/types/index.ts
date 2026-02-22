@@ -207,7 +207,6 @@ export interface AccountBalance{
 }
 
 export interface AccountBalanceDTO{
-    id?: number, 
     accountName: string,
     accountType: AccountType,
     balance: number,
