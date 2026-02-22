@@ -32,6 +32,10 @@ import { FundTransactionDAO } from './database_access/fundTransaction.dao';
 import { FundTransactionService } from './services/fundTransaction.service';
 import { FundTransactionController } from './controllers/fundTransaction.controller';
 import { FundTransactionRoutes } from './routes/fundTransaction.routes';
+import { AccountBalanceDAO } from './database_access/accountBalance.dao';
+import { AccountBalanceService } from './services/accountBalance.service';
+import { AccountBalanceController } from './controllers/accountBalance.controller';
+import { AccountBalanceRoutes } from './routes/accountBalance.routes';
 
 require("dotenv").config();
 
@@ -75,6 +79,9 @@ const fundTransactionService = new FundTransactionService(fundTransactionDAO, sa
 const fundTransactionController = new FundTransactionController(fundTransactionService);
 const savingsFundService = new SavingsFundService(savingsFundDAO, fundTransactionDAO);
 const savingsFundController = new SavingsFundController(savingsFundService);
+const accountBalanceDAO = new AccountBalanceDAO();
+const accountBalanceService = new AccountBalanceService(accountBalanceDAO);
+const accountBalanceController = new AccountBalanceController(accountBalanceService);
 
 
 console.log(process.env.MY_SQL_DB_HOST);
@@ -87,7 +94,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), FundTransactionRoutes(fundTransactionController), SavingsFundRoutes(savingsFundController));
+app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), FundTransactionRoutes(fundTransactionController), SavingsFundRoutes(savingsFundController), AccountBalanceRoutes(accountBalanceController));
 // Start the Express server
 app.listen(port, () => {
     console.log(`budgie_API listening at http://localhost:${port}`);

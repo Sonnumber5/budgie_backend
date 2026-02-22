@@ -192,3 +192,23 @@ export interface FundTransactionDTO{
     relatedFundId?: number,
 }
 
+
+//---------SAVINGS FUND TRANSACTIONS---------//
+
+export type AccountType = 'Asset' | 'Liability'
+
+export interface AccountBalance{
+    id: number, 
+    accountName: string,
+    accountType: AccountType,
+    balance: number,
+    createdAt: string,
+    updatedAt: string
+}
+
+export interface AccountBalanceDTO{
+    id?: number, 
+    accountName: string,
+    accountType: AccountType,
+    balance: number,
+}
