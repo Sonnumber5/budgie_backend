@@ -42,8 +42,6 @@ export class FundTransactionDAO{
             const reverseAmount = originalTransaction.transactionType === 'expenditure' ? originalTransaction.amount : -originalTransaction.amount;
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [reverseAmount, userId, originalTransaction.savingsFundId]);
             const newAmount = fundTransactionDTO.transactionType === 'contribution' ? fundTransactionDTO.amount : -fundTransactionDTO.amount;
-            console.log('REVERSED AMOUNT: ', reverseAmount);
-            console.log('NEW AMOUNT: ', newAmount);
             
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [newAmount, userId, fundTransactionDTO.savingsFundId]);
             
@@ -88,8 +86,8 @@ export class FundTransactionDAO{
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [-sendingFund.amount, userId, sendingFund.savingsFundId]);
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [receivingFund.amount, userId, receivingFund.savingsFundId]);
 
-            const sendingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, sendingFund.savingsFundId, sendingFund.transactionType, sendingFund.amount, sendingFund.description, sendingFund.transactionDate]);
-            const receivingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, receivingFund.savingsFundId, receivingFund.transactionType, receivingFund.amount, receivingFund.description, receivingFund.transactionDate]);
+            const sendingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, sendingFund.savingsFundId, sendingFund.transactionType, sendingFund.amount, sendingFund.description, sendingFund.transactionDate, sendingFund.month]);
+            const receivingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, receivingFund.savingsFundId, receivingFund.transactionType, receivingFund.amount, receivingFund.description, receivingFund.transactionDate, receivingFund.month]);
 
             await client.query('COMMIT');
 
@@ -110,7 +108,7 @@ export class FundTransactionDAO{
 
             await client.query<SavingsFund>(SavingsFundQueries.SET_SAVINGS_FUND_BALANCE, [adjustBalanceTransaction.amount, userId, adjustBalanceTransaction.savingsFundId]);
 
-            const result = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, adjustBalanceTransaction.savingsFundId, adjustBalanceTransaction.transactionType, adjustBalanceTransaction.amount, adjustBalanceTransaction.description, adjustBalanceTransaction.transactionDate]);
+            const result = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, adjustBalanceTransaction.savingsFundId, adjustBalanceTransaction.transactionType, adjustBalanceTransaction.amount, adjustBalanceTransaction.description, adjustBalanceTransaction.transactionDate, adjustBalanceTransaction.month]);
 
             await client.query('COMMIT');
 
@@ -126,6 +124,6 @@ export class FundTransactionDAO{
 
     async findContributionSumForMonth(userId: number, month: string): Promise<number>{
         const result = await pool.query(FundTransactionQueries.FIND_CONTRIBUTION_SUM_FOR_MONTH, [userId, month]);
-        return result.rows[0];
+        return result.rows[0].total_contributions;
     }
 }
