@@ -87,8 +87,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), SavingsFundRoutes(savingsFundController), FundTransactionRoutes(fundTransactionController));
-
+app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), FundTransactionRoutes(fundTransactionController), SavingsFundRoutes(savingsFundController));
 // Start the Express server
 app.listen(port, () => {
     console.log(`budgie_API listening at http://localhost:${port}`);

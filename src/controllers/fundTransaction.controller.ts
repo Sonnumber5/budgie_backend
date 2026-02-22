@@ -321,4 +321,30 @@ export class FundTransactionController{
         }
     }
 
+    getContributionSumForMonth = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const month = req.query.month as string;
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'invalid date format' });
+                return;
+            }
+            const totalContributions = await this.fundTransactionService.getContributionSumForMonth(userId, month);
+            res.status(200).json({ 
+                message: 'Successfully retrieved the sum of all contributions for the month',
+                totalContributions
+            })
+        
+        } catch(error: any){
+            console.log('Error retrieving contribution sum', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve contribution sum' });
+        }
+    }
+
 }

@@ -4,7 +4,8 @@ import { authenticate } from "../middleware/auth.authenticate";
 
 export const FundTransactionRoutes = (fundtransactionController: FundTransactionController) => {
     const router = Router();
-
+    
+    router.get('/savings-funds/contributions', authenticate, fundtransactionController.getContributionSumForMonth);
     router.post('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.createFundTransaction);
     router.get('/savings-funds/:fundId/transactions', authenticate, fundtransactionController.getFundTransactions);
     router.get('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.getFundTransactionById);

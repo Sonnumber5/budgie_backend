@@ -102,6 +102,7 @@ export class FundTransactionDAO{
             client.release();
         }
     }
+
     async adjustBalance(userId: number, adjustBalanceTransaction: FundTransactionDTO): Promise<FundTransaction>{
         const client = await pool.connect();
         try{
@@ -121,5 +122,10 @@ export class FundTransactionDAO{
         }finally{
             client.release();
         }
+    }
+
+    async findContributionSumForMonth(userId: number, month: string): Promise<number>{
+        const result = await pool.query(FundTransactionQueries.FIND_CONTRIBUTION_SUM_FOR_MONTH, [userId, month]);
+        return result.rows[0];
     }
 }

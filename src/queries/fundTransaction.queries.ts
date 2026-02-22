@@ -14,6 +14,6 @@ export const FundTransactionQueries = {
     WHERE user_id = $6 AND id = $7 AND savings_fund_id = $8
     RETURNING id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt";`,
     DELETE_FUND_TRANSACTION: `DELETE FROM savings_fund_transactions WHERE user_id = $1 AND id = $2 AND savings_fund_id = $3`,
-    GET_CONTRIBUTION_AMOUNT_FOR_MONTH: `SELECT SUM(amount) AS total_contributionsFROM savings_fund_transactions
-    WHERE user_id = $1 AND month = $2 AND transaction_type = 'contribution'`
+    FIND_CONTRIBUTION_SUM_FOR_MONTH: `SELECT COALESCE(SUM(amount), 0) AS total_contributions
+    FROM savings_fund_transactions WHERE user_id = $1 AND month = $2 AND transaction_type = 'contribution'`
     }

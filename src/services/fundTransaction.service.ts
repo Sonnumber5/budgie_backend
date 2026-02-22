@@ -99,4 +99,8 @@ export class FundTransactionService{
         }   
         return await this.fundTransactionDAO.adjustBalance(userId, adjustBalanceTransaction);
     }
+
+    async getContributionSumForMonth(userId: number, month: string): Promise<number>{
+        return await this.fundTransactionDAO.findContributionSumForMonth(userId, month);
+    }
 }
