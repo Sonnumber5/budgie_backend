@@ -12,4 +12,16 @@ export class AccountBalanceService{
         }
         return result;
     }
+
+    async getAccountBalances(userId: number): Promise<AccountBalance[]>{
+        return await this.accountBalanceDAO.findAccountBalances(userId);
+    }
+
+    async getAccountBalanceById(userId: number, id: number): Promise<AccountBalance>{
+        const result = await this.accountBalanceDAO.findAccountBalanceById(userId, id);
+        if (!result){
+            throw new AppError('Account balance not found', 404);
+        }
+        return result;
+    }
 }

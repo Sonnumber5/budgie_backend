@@ -6,6 +6,8 @@ export const AccountBalanceRoutes = (accountBalanceController: AccountBalanceCon
     const router = Router();
 
     router.post('/account-balances', authenticate, accountBalanceController.createAccountBalance);
+    router.get('/account-balances', authenticate, accountBalanceController.getAccountBalances);
+    router.get('/account-balances/:id', authenticate, accountBalanceController.getAccountBalanceById);
 
     return router;
 }

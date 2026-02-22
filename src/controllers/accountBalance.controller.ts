@@ -50,4 +50,52 @@ export class AccountBalanceController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create account balance' });
         }
     }
+
+    getAccountBalances = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const result = await this.accountBalanceService.getAccountBalances(userId);
+
+            res.status(200).json({
+                message: 'Successfully retrieved account balance',
+                accountBalances: result
+            });
+        } catch(error: any){
+            console.log('Error retrieving account balances', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve account balances' });
+        }
+    }
+
+    getAccountBalanceById = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+
+            if (isNaN(id) || id <= 0){
+                res.status(400).json({ error: 'id is required' });
+                return;
+            }
+
+            const result = await this.accountBalanceService.getAccountBalanceById(userId, id);
+
+            res.status(200).json({
+                message: 'Successfully retrieved account balance',
+                accountBalance: result
+            });
+        } catch(error: any){
+            console.log('Error retrieving account balances', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve account balances' });
+        }
+    }
 }
