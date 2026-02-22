@@ -12,7 +12,7 @@ export class FundTransactionDAO{
             const amount = fundTransactionDTO.transactionType === 'contribution' ? fundTransactionDTO.amount : - fundTransactionDTO.amount;
 
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [amount, userId, fundTransactionDTO.savingsFundId]);
-            const result = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, fundTransactionDTO.savingsFundId, fundTransactionDTO.transactionType, fundTransactionDTO.amount, fundTransactionDTO.description, fundTransactionDTO.transactionDate]);
+            const result = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, fundTransactionDTO.savingsFundId, fundTransactionDTO.transactionType, fundTransactionDTO.amount, fundTransactionDTO.description, fundTransactionDTO.transactionDate, fundTransactionDTO.month]);
             await client.query('COMMIT');
             return result.rows[0];
         } catch(error){ //if anything in the transaction fails, the trnasaction is nullified and the state returns to pre-transaction
@@ -47,7 +47,7 @@ export class FundTransactionDAO{
             
             await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [newAmount, userId, fundTransactionDTO.savingsFundId]);
             
-            const result = await client.query<FundTransaction>(FundTransactionQueries.UPDATE_FUND_TRANSACTION, [fundTransactionDTO.transactionType, fundTransactionDTO.amount, fundTransactionDTO.description, fundTransactionDTO.transactionDate, userId, fundTransactionDTO.id, fundTransactionDTO.savingsFundId]);
+            const result = await client.query<FundTransaction>(FundTransactionQueries.UPDATE_FUND_TRANSACTION, [fundTransactionDTO.transactionType, fundTransactionDTO.amount, fundTransactionDTO.description, fundTransactionDTO.transactionDate, fundTransactionDTO.month, userId, fundTransactionDTO.id, fundTransactionDTO.savingsFundId]);
 
             await client.query('COMMIT');
             return result.rows[0];
@@ -97,6 +97,26 @@ export class FundTransactionDAO{
         }catch(error){
             await client.query('ROLLBACK');
             console.error('Failed to create transfer transaction', error);
+            throw error;
+        }finally{
+            client.release();
+        }
+    }
+    async adjustBalance(userId: number, adjustBalanceTransaction: FundTransactionDTO): Promise<FundTransaction>{
+        const client = await pool.connect();
+        try{
+            await client.query('BEGIN');
+
+            await client.query<SavingsFund>(SavingsFundQueries.SET_SAVINGS_FUND_BALANCE, [adjustBalanceTransaction.amount, userId, adjustBalanceTransaction.savingsFundId]);
+
+            const result = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, adjustBalanceTransaction.savingsFundId, adjustBalanceTransaction.transactionType, adjustBalanceTransaction.amount, adjustBalanceTransaction.description, adjustBalanceTransaction.transactionDate]);
+
+            await client.query('COMMIT');
+
+            return result.rows[0];
+        }catch(error){
+            await client.query('ROLLBACK');
+            console.error('Failed to adjust balance', error);
             throw error;
         }finally{
             client.release();

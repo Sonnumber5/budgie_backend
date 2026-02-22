@@ -2,6 +2,7 @@ import { FundTransactionService } from "../services/fundTransaction.service";
 import { Request, Response } from "express";
 import { AuthRequest, FundTransactionDTO, TransactionType } from "../types";
 import { isValidDate } from "../utils/date";
+import { getMonth } from "../utils/date";
 
 export class FundTransactionController{
     constructor(private fundTransactionService: FundTransactionService){}
@@ -43,12 +44,14 @@ export class FundTransactionController{
                 res.status(400).json({ error: 'Transaction type must be either contribution or expenditure' });
                 return;
             }
+            const month = getMonth(transactionDate);
             const fundTransactionDTO: FundTransactionDTO = {
                 savingsFundId: fundId,
                 transactionType,
                 amount,
                 description,
-                transactionDate
+                transactionDate,
+                month
             }
             const result = await this.fundTransactionService.createFundTransaction(userId, fundTransactionDTO);
             res.status(201).json({ 
@@ -162,13 +165,16 @@ export class FundTransactionController{
                 res.status(400).json({ error: 'Transaction type must be either contribution or expenditure' });
                 return;
             }
+
+            const month = getMonth(transactionDate);
             const fundTransactionDTO: FundTransactionDTO = {
                 id: transactionId,
                 savingsFundId: fundId,
                 transactionType,
                 amount,
                 description,
-                transactionDate
+                transactionDate,
+                month
             }
             const result = await this.fundTransactionService.updateFundTransaction(userId, fundTransactionDTO);
             res.status(200).json({ 
@@ -241,13 +247,15 @@ export class FundTransactionController{
                 return;
             }
 
+            const month = getMonth(transactionDate);
             const sendingFund: FundTransactionDTO = {
                 savingsFundId,
                 transactionType: "transfer_out",
                 amount,
                 description: "Transfer out from another fund",
                 transactionDate,
-                relatedFundId
+                month,
+                relatedFundId,
             }
             const receivingFund: FundTransactionDTO = {
                 savingsFundId: relatedFundId,
@@ -255,6 +263,7 @@ export class FundTransactionController{
                 amount,
                 description: "Transfer in from another fund",
                 transactionDate,
+                month,
                 relatedFundId: savingsFundId
             }
             const transactions = await this.fundTransactionService.transferBalance(userId, sendingFund, receivingFund);
@@ -267,4 +276,49 @@ export class FundTransactionController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to transfer balance' });
         }
     }
+
+    adjustBalance = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const savingsFundId = parseInt(req.params.fundId as string);
+            const transactionDate = new Date().toISOString().split('T')[0];
+            const { amount } = req.body;
+
+            if (isNaN(savingsFundId) || savingsFundId <= 0){
+                res.status(400).json({ error: 'Invalid fund id format' });
+                return;
+            }
+
+            const parsedAmount = Number(amount);
+            if (isNaN(parsedAmount) || parsedAmount <= 0){
+                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                return;
+            }
+
+            const month = getMonth(transactionDate);
+            const adjustBalanceTransaction: FundTransactionDTO = {
+                savingsFundId,
+                transactionType: "adjustment",
+                amount,
+                description: "Balance adjustment",
+                transactionDate,
+                month
+            }
+
+            const transaction = await this.fundTransactionService.adjustBalance(userId, adjustBalanceTransaction);
+            res.status(200).json({ 
+                message: 'Successfully adjusted balance',
+                transaction
+            });
+        }catch(error: any){
+            console.log('Error adjusting balance', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to adjust balance' });
+        }
+    }
+
 }

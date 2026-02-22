@@ -78,20 +78,25 @@ export class FundTransactionService{
     }
 
     async transferBalance(userId: number, sendingFund: FundTransactionDTO, receivingFund: FundTransactionDTO): Promise<FundTransaction[]>{ 
-        if (!sendingFund.savingsFundId){
-            throw new AppError('Sending fund id is required', 400);
-        }
-        if (!receivingFund.savingsFundId){
-            throw new AppError('Receiving fund id is required', 400);
-        }
         const sendingFundExists = await this.savingsFundDAO.findSavingsFundById(userId, sendingFund.savingsFundId);
         const receivingFundExists = await this.savingsFundDAO.findSavingsFundById(userId, receivingFund.savingsFundId);
-        if (!sendingFundExists || !receivingFundExists){
-            throw new AppError('Savings fund not found', 404);
+        if (!sendingFundExists){
+            throw new AppError('Sending fund not found', 404);
+        }
+        if (!receivingFundExists){
+            throw new AppError('Receiving fund not found', 404);
         }
         if (sendingFundExists.balance - sendingFund.amount < 0){
             throw new AppError('Insufficient funds', 400);
         }
        return await this.fundTransactionDAO.transferBalance(userId, sendingFund, receivingFund);
+    }
+
+    async adjustBalance(userId: number, adjustBalanceTransaction: FundTransactionDTO): Promise<FundTransaction>{
+        const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, adjustBalanceTransaction.savingsFundId);
+        if (!existingFund){
+            throw new AppError('Savings fund not found', 404);
+        }   
+        return await this.fundTransactionDAO.adjustBalance(userId, adjustBalanceTransaction);
     }
 }

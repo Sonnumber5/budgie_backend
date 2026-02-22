@@ -176,6 +176,7 @@ export interface FundTransaction{
     amount: number,
     description: string,
     transactionDate: string,
+    month: string,
     relatedFundId?: number,
     createdAt: string
 }
@@ -187,6 +188,7 @@ export interface FundTransactionDTO{
     amount: number,
     description: string,
     transactionDate: string,
+    month: string,
     relatedFundId?: number,
 }
 
