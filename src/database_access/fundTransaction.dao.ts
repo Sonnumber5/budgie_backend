@@ -79,4 +79,27 @@ export class FundTransactionDAO{
             client.release();
         }
     }
+
+    async transferBalance(userId: number, sendingFund: FundTransactionDTO, receivingFund: FundTransactionDTO): Promise<FundTransaction[]>{
+        const client = await pool.connect();
+        try{
+            await client.query('BEGIN');
+
+            await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [-sendingFund.amount, userId, sendingFund.savingsFundId]);
+            await client.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND_BALANCE, [receivingFund.amount, userId, receivingFund.savingsFundId]);
+
+            const sendingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, sendingFund.savingsFundId, sendingFund.transactionType, sendingFund.amount, sendingFund.description, sendingFund.transactionDate]);
+            const receivingResult = await client.query<FundTransaction>(FundTransactionQueries.CREATE_FUND_TRANSACTION, [userId, receivingFund.savingsFundId, receivingFund.transactionType, receivingFund.amount, receivingFund.description, receivingFund.transactionDate]);
+
+            await client.query('COMMIT');
+
+            return [sendingResult.rows[0], receivingResult.rows[0]];
+        }catch(error){
+            await client.query('ROLLBACK');
+            console.error('Failed to create transfer transaction', error);
+            throw error;
+        }finally{
+            client.release();
+        }
+    }
 }

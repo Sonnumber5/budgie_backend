@@ -10,6 +10,7 @@ export const FundTransactionRoutes = (fundtransactionController: FundTransaction
     router.get('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.getFundTransactionById);
     router.put('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.updateFundTransaction);
     router.delete('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundtransactionController.deleteFundTransaction);
+    router.post('/savings-funds/:fundId/transactions/transfer', authenticate, fundtransactionController.transferBalance);
 
     return router;
 }

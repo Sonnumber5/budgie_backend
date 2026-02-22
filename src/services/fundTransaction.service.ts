@@ -76,4 +76,22 @@ export class FundTransactionService{
             throw new AppError('Failed to delete transaction', 500);
         }
     }
+
+    async transferBalance(userId: number, sendingFund: FundTransactionDTO, receivingFund: FundTransactionDTO): Promise<FundTransaction[]>{ 
+        if (!sendingFund.savingsFundId){
+            throw new AppError('Sending fund id is required', 400);
+        }
+        if (!receivingFund.savingsFundId){
+            throw new AppError('Receiving fund id is required', 400);
+        }
+        const sendingFundExists = await this.savingsFundDAO.findSavingsFundById(userId, sendingFund.savingsFundId);
+        const receivingFundExists = await this.savingsFundDAO.findSavingsFundById(userId, receivingFund.savingsFundId);
+        if (!sendingFundExists || !receivingFundExists){
+            throw new AppError('Savings fund not found', 404);
+        }
+        if (sendingFundExists.balance - sendingFund.amount < 0){
+            throw new AppError('Insufficient funds', 400);
+        }
+       return await this.fundTransactionDAO.transferBalance(userId, sendingFund, receivingFund);
+    }
 }

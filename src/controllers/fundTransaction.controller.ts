@@ -211,4 +211,60 @@ export class FundTransactionController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete transaction' });
         }
     }
+
+    transferBalance = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const savingsFundId = parseInt(req.params.fundId as string);
+            const transactionDate = new Date().toISOString().split('T')[0];
+            const { amount, relatedFundId } = req.body;
+
+            if (isNaN(savingsFundId) || savingsFundId <= 0){
+                res.status(400).json({ error: 'Invalid fund id format' });
+                return;
+            }
+
+            const parsedRelatedFundId = parseInt(relatedFundId);
+            if (isNaN(parsedRelatedFundId) || parsedRelatedFundId <= 0){
+                res.status(400).json({ error: 'Invalid receiving fund id format' });
+                return;
+            }
+
+            const parsedAmount = Number(amount);
+            if (isNaN(parsedAmount) || parsedAmount <= 0){
+                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                return;
+            }
+
+            const sendingFund: FundTransactionDTO = {
+                savingsFundId,
+                transactionType: "transfer_out",
+                amount,
+                description: "Transfer out from another fund",
+                transactionDate,
+                relatedFundId
+            }
+            const receivingFund: FundTransactionDTO = {
+                savingsFundId: relatedFundId,
+                transactionType: "transfer_in",
+                amount,
+                description: "Transfer in from another fund",
+                transactionDate,
+                relatedFundId: savingsFundId
+            }
+            const transactions = await this.fundTransactionService.transferBalance(userId, sendingFund, receivingFund);
+            res.status(200).json({ 
+                message: 'Successfully transfered balance',
+                transactions
+            });
+        }catch(error: any){
+            console.log('Error transfering balance', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to transfer balance' });
+        }
+    }
 }
