@@ -86,11 +86,6 @@ const accountBalanceController = new AccountBalanceController(accountBalanceServ
 
 console.log(process.env.MY_SQL_DB_HOST);
 
-//Application routes
-// Root route
-app.get('/health', (req: Request, res: Response) => {
-    res.send('<h1>Welcome to the Budgie API</h1>').json({ status: 'ok' });
-});
 
 // Mount routers 
 app.use('/api/auth', authRoutes(authController));

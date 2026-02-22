@@ -60,7 +60,7 @@ export class CategoryService{
     }
 
     async deleteCategory(id: number, userId: number): Promise<void>{
-        const result = this.categoryDAO.deleteCategory(id, userId);
+        const result = await this.categoryDAO.deleteCategory(id, userId);
         if (!result){
             throw new AppError('Category not found', 404);
         }

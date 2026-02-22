@@ -50,8 +50,8 @@ export class SavingsFundService{
         if (!existingSavingsFund){
             throw new AppError('Savings fund not found', 404);
         }
-        const transactions = await this.fundTransactionDAO.findFundTransactions(userId, id);
-        if (transactions.length > 1){
+        const hasTransactions = await this.fundTransactionDAO.hasTransactions(userId, id);
+        if (hasTransactions){
             await this.savingsFundDAO.archiveSavingsFund(userId, id);
             return false;
         } else{

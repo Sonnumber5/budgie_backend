@@ -97,7 +97,7 @@ export class ExpenseController{
                 expenses: expensesArr
             });
         } catch(error: any){
-            console.log('Error retieving expenses', error);
+            console.log('Error retrieving expenses', error);
             res.status(error.statusCode || 500).json({ error: error.message || "Failed to retrieve expenses" });
         }
     }

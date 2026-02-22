@@ -126,4 +126,9 @@ export class FundTransactionDAO{
         const result = await pool.query(FundTransactionQueries.FIND_CONTRIBUTION_SUM_FOR_MONTH, [userId, month]);
         return result.rows[0].total_contributions;
     }
+
+    async hasTransactions(userId: number, fundId: number): Promise<boolean>{
+        const result = await pool.query(FundTransactionQueries.FIND_CONT_AND_EXP_QTY, [userId, fundId]);
+        return result.rows[0].total_records !== null && result.rows[0].total_records > 0;
+    }
 }
