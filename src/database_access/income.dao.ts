@@ -1,7 +1,6 @@
 import pool from "../database";
 import { IncomeDTO, Income } from "../types";
 import { IncomeQueries } from "../queries/income.queries";
-import { endOfMonth } from "date-fns";
 
 export class IncomeDAO{
     async createIncome(incomeDTO: IncomeDTO): Promise<Income>{

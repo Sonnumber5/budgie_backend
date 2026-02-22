@@ -84,7 +84,7 @@ const accountBalanceService = new AccountBalanceService(accountBalanceDAO);
 const accountBalanceController = new AccountBalanceController(accountBalanceService);
 
 
-console.log(process.env.MY_SQL_DB_HOST);
+console.log(process.env.DB_HOST);
 
 
 // Mount routers 
