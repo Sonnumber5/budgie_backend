@@ -81,7 +81,7 @@ export class AuthController{
             res.cookie('token', result.token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                sameSite: 'lax',
                 maxAge: 24 * 60 * 60 * 1000
             });
 
@@ -98,5 +98,10 @@ export class AuthController{
     logout = (req: Request, res: Response): void => {
         res.clearCookie('token');
         res.json({ message: 'Logout successful' });
+    }
+
+    me = async (req: Request, res: Response): Promise<void> => {
+        const user = (req as AuthRequest).user;
+        res.json({ user });
     }
 }

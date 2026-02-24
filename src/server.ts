@@ -44,8 +44,10 @@ dotenv.config();
 const app = express(); // Creates an instance of an Express application
 const port = 3001; // Sets the port number for the app to listen on
 
-// Enable CORS for all requests
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 
 app.use(cookieParser());  
 
