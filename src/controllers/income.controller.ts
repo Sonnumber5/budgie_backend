@@ -236,5 +236,4 @@ export class IncomeController{
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
         }
     }
-
 }

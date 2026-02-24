@@ -51,4 +51,8 @@ export class ExpenseService{
             throw new AppError('Expense not found', 404);
         }
     }
+
+    async getMonthlyExpenseSum(userId: number, month: string): Promise<number>{
+        return await this.expenseDAO.findMonthlyExpenseSum(userId, month);
+    }
 }

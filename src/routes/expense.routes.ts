@@ -5,6 +5,7 @@ import { authenticate } from "../middleware/auth.authenticate";
 export const ExpenseRoutes = (expenseController: ExpenseController) => {
     const router = Router();
 
+    router.get('/expenses/total', authenticate, expenseController.getMonthlyExpenseSum);
     router.post('/expenses', authenticate, expenseController.createExpense);
     router.get('/expenses', authenticate, expenseController.getExpenses);
     router.get('/expenses/:id', authenticate, expenseController.getExpenseById);

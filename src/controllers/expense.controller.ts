@@ -224,4 +224,31 @@ export class ExpenseController{
             res.status(error.statusCode || 500).json({ error: error.message || "Failed to delete expense" });
         }
     }
+
+    getMonthlyExpenseSum = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const month = req.query.month as string;
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'invalid date format' });
+                return;
+            }
+
+            const expenseSum = await this.expenseService.getMonthlyExpenseSum(userId, month)
+            res.status(200).json({ 
+                message: 'Successfully retrieved expense total',
+                expenseSum
+             })
+        } catch(error: any){
+            console.log('Error retrieving expenses', error),
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve expenses' });
+        }
+    }
 }

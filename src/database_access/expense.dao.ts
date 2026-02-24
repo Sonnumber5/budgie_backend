@@ -23,6 +23,11 @@ export class ExpenseDAO{
         return result.rows[0];
     }
 
+    async findMonthlyExpenseSum(userId: number, month: string): Promise<number>{
+        const result =  await pool.query(ExpenseQueries.FIND_EXPENSE_SUM_FOR_MONTH, [userId, month]);
+        return result.rows[0].expense_sum;
+    }
+
     async updateExpense(userId: number, id: number, expenseDTO: ExpenseDTO): Promise<Expense>{
         const result = await pool.query<Expense>(ExpenseQueries.UPDATE_EXPENSE, [expenseDTO.categoryId, expenseDTO.vendor, expenseDTO.amount, expenseDTO.description, expenseDTO.expenseDate, expenseDTO.month, id, userId]);
         return result.rows[0];
