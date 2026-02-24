@@ -210,4 +210,31 @@ export class IncomeController{
         }
     }
 
+    getMonthlyIncomeSum = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const month = req.query.month as string;
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'invalid date format' });
+                return;
+            }
+
+            const incomeSum = await this.incomeService.getMonthlyIncomeSum(userId, month)
+            res.status(200).json({ 
+                message: 'Successfully retrieved income total',
+                incomeSum
+             })
+        } catch(error: any){
+            console.log('Error retrieving income', error),
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+        }
+    }
+
 }

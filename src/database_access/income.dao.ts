@@ -32,4 +32,9 @@ export class IncomeDAO{
         const result = await pool.query<Income>(IncomeQueries.DELETE_INCOME, [id, userId]);
         return result.rowCount !== null && result.rowCount > 0;
     }
+
+    async findMonthlyIncomeSum(userId: number, month: string): Promise<number>{
+        const result =  await pool.query(IncomeQueries.FIND_INCOME_SUM_FOR_MONTH, [userId, month]);
+        return result.rows[0].income_sum;
+    }
 }

@@ -35,4 +35,8 @@ export class IncomeService{
             throw new AppError('Income not found', 404);
         }
     }
+
+    async getMonthlyIncomeSum(userId: number, month: string): Promise<number>{
+        return await this.incomeDAO.findMonthlyIncomeSum(userId, month);
+    }
 }
