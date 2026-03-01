@@ -42,7 +42,8 @@ export class ExpenseService{
         if (!existingExpense){
             throw new AppError('Expense not found', 404);
         }
-        return await this.expenseDAO.updateExpense(userId, id, expenseDTO);
+        await this.expenseDAO.updateExpense(userId, id, expenseDTO);
+        return await this.expenseDAO.findExpenseById(userId, id);
     }
 
     async deleteExpense(userId: number, id: number): Promise<void>{
