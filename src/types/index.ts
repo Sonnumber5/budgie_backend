@@ -86,6 +86,7 @@ export interface Expense {
     amount: number,
     description: string,
     expenseDate: string,
+    month: string,
     createdAt: string,
     updatedAt: string
 }
@@ -104,6 +105,7 @@ export interface ExpenseDTO{
 //---------MONTHLY BUDGET---------//
 
 export interface MonthlyBudget{
+    //updatedMonthlyBudget: any;
     id: number, 
     month: string,
     expectedIncome: number,

@@ -7,8 +7,7 @@ export function isValidDate(date: string): boolean{
     return !isNaN(parsed.getTime());
 }
 
-export function getMonth(incomeDate: string): string{
-    const date = new Date(incomeDate);
-    const monthFormat = new Date(date.getFullYear(), date.getMonth(), 1);
-    return monthFormat.toISOString().split("T")[0];
+export function getMonth(incomeDate: string): string {
+    const [year, month] = incomeDate.split('-');
+    return `${year}-${month}-01`;
 }

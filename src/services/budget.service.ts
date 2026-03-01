@@ -2,9 +2,10 @@ import { CategoryDAO } from "../database_access/category.dao";
 import { BudgetDAO } from "../database_access/budget.dao";
 import { CategoryBudget, CategoryBudgetDTO, CategoryDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
 import { AppError } from "../utils/AppError";
+import { ExpenseDAO } from "../database_access/expense.dao";
 
 export class BudgetService{
-    constructor(private budgetDAO: BudgetDAO, private categoryDAO: CategoryDAO){}
+    constructor(private budgetDAO: BudgetDAO, private categoryDAO: CategoryDAO, private expenseDAO: ExpenseDAO){}
 
     async createMonthlyBudget(monthlyBudgetDTO: MonthlyBudgetDTO): Promise<MonthlyBudget>{
         const existingMonthlyBudget = await this.budgetDAO.findMonthlyBudgetByMonth(monthlyBudgetDTO.userId, monthlyBudgetDTO.month!);

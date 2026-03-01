@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { BudgetService } from "../services/budget.service";
-import { AuthRequest, CategoryBudgetDTO, CategoryDTO, MonthlyBudgetDTO } from "../types";
-import { getMonth, isValidDate } from "../utils/date";
+import { AuthRequest, CategoryBudgetDTO, MonthlyBudgetDTO } from "../types";
+import { isValidDate } from "../utils/date";
 import { CategoryService } from "../services/category.service";
 
 export class MonthlyBudgetController{
@@ -15,14 +15,14 @@ export class MonthlyBudgetController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { month, expectedIncome, categoryBudgets } = req.body;
+            const { month, expectedIncome, categoryBudgetDTOs } = req.body;
 
             if (!expectedIncome || !month){
                 res.status(400).json({ error: 'Expected income and month are required' });
                 return;
             }
 
-            if (!categoryBudgets || !Array.isArray(categoryBudgets)){
+            if (!categoryBudgetDTOs || !Array.isArray(categoryBudgetDTOs)){
                 res.status(400).json({ error: 'Category budgets must be an array' });
                 return;
             }
@@ -42,10 +42,10 @@ export class MonthlyBudgetController{
                 return;
             }
 
-            const categoryBudgetDTOs: CategoryBudgetDTO[] = []
+            const newCategoryBudgetDTOs: CategoryBudgetDTO[] = []
 
-            for (const categoryBudget of categoryBudgets){
-                if (!categoryBudget.categoryName || !categoryBudget.budgetedAmount){
+            for (const categoryBudget of categoryBudgetDTOs){
+                if (!categoryBudget.categoryName || categoryBudget.budgetedAmount === undefined){
                     res.status(400).json({ error: 'Each category budget must have categoryName and budgetedAmount' });
                     return;
                 }
@@ -54,22 +54,22 @@ export class MonthlyBudgetController{
                     res.status(400).json({ error: 'Budgeted amounts must be positive' });
                     return;
                 }
-                const category = await this.categoryService.getCategoryByName(userId, categoryBudget.categoryName);
+                
+                const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
 
                 const newCategoryBudgetDTO: CategoryBudgetDTO = {
                     userId,
-                    //monthlyBudgetId: categoryBudget.monthlyBudgetId,
                     categoryId: category.id,
                     budgetedAmount: categoryBudget.budgetedAmount
                 };
-                categoryBudgetDTOs.push(newCategoryBudgetDTO);
+                newCategoryBudgetDTOs.push(newCategoryBudgetDTO);
             }
 
             const monthlyBudgetToAdd: MonthlyBudgetDTO = {
                 userId,
                 month,
                 expectedIncome,
-                categoryBudgetDTOs
+                categoryBudgetDTOs: newCategoryBudgetDTOs
             }
             const newMonthlyBudget = await this.budgetService.createMonthlyBudget(monthlyBudgetToAdd);
 
@@ -138,7 +138,9 @@ export class MonthlyBudgetController{
                 budget: result
             });
         } catch(error: any){
-            console.log('Error retrieving budget', error);
+            if (error.statusCode !== 404) {
+                console.log('Error retrieving budget', error);
+            }
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve budget' });
         }
     }
@@ -151,7 +153,7 @@ export class MonthlyBudgetController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { expectedIncome, categoryBudgets } = req.body;
+            const { expectedIncome, categoryBudgetDTOs } = req.body;
             const id = parseInt(req.params.id as string);
 
             if (isNaN(id)){
@@ -161,11 +163,6 @@ export class MonthlyBudgetController{
 
             if (!expectedIncome){
                 res.status(400).json({ error: 'Expected income is required' });
-                return;
-            }
-
-            if (!categoryBudgets || !Array.isArray(categoryBudgets)){
-                res.status(400).json({ error: 'Category budgets is required' });
                 return;
             }
 
@@ -179,35 +176,37 @@ export class MonthlyBudgetController{
                 return;
             }
 
-            const categoryBudgetDTOs: CategoryBudgetDTO[] = []
+            const newCategoryBudgetDTOs: CategoryBudgetDTO[] = []
 
-            for (const categoryBudget of categoryBudgets){
-                const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
-                if (!categoryBudget.categoryName){
-                    res.status(400).json({ error: 'Category name is required' });
-                    return;
-                }
-                if (categoryBudget.budgetedAmount <= 0){
-                    res.status(400).json({ error: 'Budgeted amount must be a positive number' });
-                    return;
-                }
+            if (categoryBudgetDTOs && Array.isArray(categoryBudgetDTOs)) {
+                for (const categoryBudget of categoryBudgetDTOs){
+                    if (!categoryBudget.categoryName){
+                        res.status(400).json({ error: 'Category name is required for new category budgets' });
+                        return;
+                    }
+                    
+                    if (categoryBudget.budgetedAmount === undefined || categoryBudget.budgetedAmount <= 0){
+                        res.status(400).json({ error: 'Budgeted amount must be a positive number' });
+                        return;
+                    }
 
-                const newCategoryBudgetDTO: CategoryBudgetDTO = {
-                    id: categoryBudget.id,
-                    userId,
-                    monthlyBudgetId: id,
-                    categoryId: category.id,
-                    categoryName: category.name,
-                    budgetedAmount: categoryBudget.budgetedAmount
-                };
-                categoryBudgetDTOs.push(newCategoryBudgetDTO);
+                    const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
+
+                    const newCategoryBudgetDTO: CategoryBudgetDTO = {
+                        userId,
+                        monthlyBudgetId: id,
+                        categoryId: category.id,
+                        budgetedAmount: categoryBudget.budgetedAmount
+                    };
+                    newCategoryBudgetDTOs.push(newCategoryBudgetDTO);
+                }
             }
 
             const monthlyBudgetToUpdate: MonthlyBudgetDTO = {
                 id,
                 userId,
                 expectedIncome,
-                categoryBudgetDTOs
+                categoryBudgetDTOs: newCategoryBudgetDTOs
             }
             const updatedMonthlyBudget = await this.budgetService.updateMonthlyBudget(monthlyBudgetToUpdate);
 
@@ -254,7 +253,7 @@ export class MonthlyBudgetController{
             const id = parseInt(req.params.id as string);
 
             if (isNaN(id)){
-                res.status(400).json({ error: 'Invalid monthly budget id' });
+                res.status(400).json({ error: 'Invalid category budget id' });
                 return;
             }
 
@@ -280,11 +279,11 @@ export class MonthlyBudgetController{
             const id = parseInt(req.params.id as string);
 
             if (isNaN(id)){
-                res.status(400).json({ error: 'Invalid budget category id' });
+                res.status(400).json({ error: 'Invalid category budget id' });
                 return;
             }
             await this.budgetService.deleteCategoryBudget(userId, id);
-            res.status(200).json({ message: 'Successfully deleted budget category' });
+            res.status(200).json({ message: 'Successfully deleted category budget' });
         } catch(error: any){
             console.log('Error deleting category budget', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete category budget' });
@@ -303,7 +302,7 @@ export class MonthlyBudgetController{
             const { budgetedAmount } = req.body;
 
             if (isNaN(id)){
-                res.status(400).json({ error: 'Invalid budget category id' });
+                res.status(400).json({ error: 'Invalid category budget id' });
                 return;
             }
 
@@ -314,7 +313,7 @@ export class MonthlyBudgetController{
 
             const updatedCategoryBudget = await this.budgetService.updateCategoryBudget(budgetedAmount, id, userId);
             res.status(200).json({ 
-                message: 'Successfully updated budget category',
+                message: 'Successfully updated category budget',
                 categoryBudget: updatedCategoryBudget
             });
         } catch(error: any){

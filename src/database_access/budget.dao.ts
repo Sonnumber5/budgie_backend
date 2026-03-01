@@ -2,6 +2,7 @@ import pool from "../database";
 import { CategoryBudgetDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
 import { CategoryBudget } from "../types";
 import { BudgetQueries } from "../queries/budget.queries";
+import { ExpenseQueries } from "../queries/expense.queries";
 
 export class BudgetDAO{
     
@@ -32,7 +33,7 @@ export class BudgetDAO{
                 expectedIncome,
                 categoryBudgets,
                 createdAt,
-                updatedAt
+                updatedAt,
             }
 
             await client.query('COMMIT');
@@ -70,21 +71,16 @@ export class BudgetDAO{
             
             const updatedMonthlyBudget = result.rows[0];
 
-            let updatedCategoryBudgets: CategoryBudget[] = [];
             for (const current of monthlyBudgetDTO.categoryBudgetDTOs) {
                 if (current.id){
                     const updated = await client.query<CategoryBudget>(BudgetQueries.UPDATE_CATEGORY_BUDGET, [current.budgetedAmount, current.id, monthlyBudgetDTO.userId]);
-                    if (updated.rows.length === 0) {
-                        throw new Error('Category budget not found or unauthorized');
-                    }
-                    updatedCategoryBudgets.push(updated.rows[0]);
                 } else{
                     const newCategoryBudget = await client.query<CategoryBudget>(BudgetQueries.CREATE_CATEGORY_BUDGET, [monthlyBudgetDTO.id, current.categoryId, current.budgetedAmount]);
-                    updatedCategoryBudgets.push(newCategoryBudget.rows[0]);
                 }
             }
 
-            updatedMonthlyBudget.categoryBudgets = updatedCategoryBudgets;
+            const allCategoryBudgets = await client.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGETS_BY_MONTHLY_BUDGET_ID, [monthlyBudgetDTO.userId, monthlyBudgetDTO.id]);
+            updatedMonthlyBudget.categoryBudgets = allCategoryBudgets.rows;
 
             await client.query('COMMIT');
             return updatedMonthlyBudget;
@@ -119,7 +115,44 @@ export class BudgetDAO{
     }
 
     async deleteCategoryBudget(userId: number, id: number): Promise<boolean>{
-        const result = await pool.query<CategoryBudget>(BudgetQueries.DELETE_CATEGORY_BUDGET, [userId, id]);
-        return result.rowCount !== null && result.rowCount > 0;
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            
+            // Get the category budget details
+            const categoryBudgetResult = await client.query(
+                BudgetQueries.GET_CATEGORY_BUDGET_DETAILS,
+                [id, userId]
+            );
+            
+            if (categoryBudgetResult.rows.length === 0) {
+                await client.query('ROLLBACK');
+                return false;
+            }
+            
+            const { categoryId, month } = categoryBudgetResult.rows[0];
+            
+            // Delete related expenses
+            await client.query(
+                ExpenseQueries.DELETE_EXPENSES_BY_CATEGORY_AND_MONTH,
+                [categoryId, userId, month]
+            );
+            
+            // Delete the category budget
+            const result = await client.query(
+                BudgetQueries.DELETE_CATEGORY_BUDGET, 
+                [userId, id]
+            );
+            
+            await client.query('COMMIT');
+            return result.rowCount !== null && result.rowCount > 0;
+            
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Failed to delete category budget:', error);
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 }
