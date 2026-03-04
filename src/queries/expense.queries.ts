@@ -1,6 +1,12 @@
 export const ExpenseQueries = {
 CREATE_EXPENSE: `INSERT INTO expenses (user_id, category_id, vendor, amount, description, expense_date, month) VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, category_id AS "categoryId", vendor, amount, description, expense_date AS "expenseDate", month, created_at AS "createdAt", updated_at AS "updatedAt"`,
+RETURNING id`,
+GET_CREATED_EXPENSE: `SELECT e.id, e.category_id AS "categoryId", c.name AS "categoryName", 
+e.vendor, e.amount, e.description, e.expense_date AS "expenseDate", 
+e.month, e.created_at AS "createdAt", e.updated_at AS "updatedAt"
+FROM expenses e
+JOIN categories c ON e.category_id = c.id
+WHERE e.user_id = $1 AND e.id = $2`,
 FIND_EXPENSES_BY_DATE: `SELECT e.id, e.category_id AS "categoryId", c.name AS "categoryName", e.vendor, e.amount, e.description, e.expense_date AS "expenseDate", e.month, e.created_at AS "createdAt", e.updated_at AS "updatedAt"
 FROM expenses e
 JOIN categories c ON c.id = e.category_id

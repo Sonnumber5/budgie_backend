@@ -16,7 +16,7 @@ export class ExpenseController{
             }
             const userId = authRequest.user.userId;
 
-            const { existingCategoryId, vendor, amount, description, expenseDate } = req.body;
+            const { existingCategoryId, vendor, amount, description, expenseDate, month } = req.body;
             
             let category;
 
@@ -48,7 +48,10 @@ export class ExpenseController{
                 return;
             }
 
-            const month = getMonth(expenseDate);
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
+                return;
+            }
 
             const newExpense: ExpenseDTO = {
                 userId,
@@ -138,7 +141,7 @@ export class ExpenseController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { existingCategoryId, vendor, amount, description, expenseDate } = req.body;
+            const { existingCategoryId, vendor, amount, description, expenseDate, month } = req.body;
             
             const id = parseInt(req.params.id as string); 
 
@@ -177,7 +180,10 @@ export class ExpenseController{
                 return;
             }
 
-            const month = getMonth(expenseDate);
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
+                return;
+            }
 
             const updateExpense: ExpenseDTO = {
                 userId,
