@@ -27,7 +27,7 @@ WHERE id = $7 AND user_id = $8
 RETURNING id, category_id AS "categoryId", vendor, amount, description, expense_date AS "expenseDate", month, created_at AS "createdAt", updated_at AS "updatedAt"`,     
 DELETE_EXPENSE: `DELETE FROM expenses WHERE user_id = $1 AND id = $2`,
 DELETE_EXPENSES_BY_CATEGORY_AND_MONTH: `DELETE FROM expenses 
-WHERE category_id = $1 
-AND user_id = $2 
-AND DATE_TRUNC('month', expense_date) = DATE_TRUNC('month', $3::date)`,           
+WHERE user_id = $1 
+AND category_id = $2 
+AND month = $3`,           
 }

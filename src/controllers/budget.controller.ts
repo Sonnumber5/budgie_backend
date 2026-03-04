@@ -283,7 +283,7 @@ export class MonthlyBudgetController{
                 return;
             }
             await this.budgetService.deleteCategoryBudget(userId, id);
-            res.status(200).json({ message: 'Successfully deleted category budget' });
+            res.status(200).json({ message: 'Successfully deleted category budget and related expenses' });
         } catch(error: any){
             console.log('Error deleting category budget', error);
             res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete category budget' });
