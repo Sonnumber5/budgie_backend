@@ -29,6 +29,11 @@ export class FundTransactionDAO{
         return result.rows;
     }
 
+    async findAllTransactionsForActiveFunds(userId: number): Promise<FundTransaction[]>{
+        const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_ALL_TRANSACTIONS_FOR_ACTIVE_FUNDS, [userId]);
+        return result.rows;
+    }
+
     async findFundTransactionById(userId: number, id: number, savingsFundId: number): Promise<FundTransaction>{
         const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, id, savingsFundId]);
         return result.rows[0];

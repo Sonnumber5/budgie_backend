@@ -111,6 +111,27 @@ export class FundTransactionController{
         }
     }
 
+    getAllTransactionsForActiveFunds = async (req: Request, res: Response): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+
+            const allTransactions = await this.fundTransactionService.getAllTransactionsForActiveFunds(userId);
+
+            res.status(200).json({ 
+                message: 'Successfully retrieved transactions',
+                activeFundTransactions: allTransactions
+            });
+        }catch(error: any){
+            console.log('Error retrieving transactions', error);
+            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transactions' });
+        }
+    }
+
     getFundTransactionById = async (req: Request, res: Response): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
