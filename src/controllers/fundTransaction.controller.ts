@@ -35,12 +35,17 @@ export class FundTransactionController{
             }
 
             if (!month){
-                res.status(400).json({ error: 'Month date is required' });
+                res.status(400).json({ error: 'Month is required' });
                 return;
             }
 
             if (!isValidDate(transactionDate)){
                 res.status(400).json({ error: 'Invalid date format' });
+                return;
+            }
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
                 return;
             }
 
@@ -148,7 +153,7 @@ export class FundTransactionController{
             const userId = authRequest.user.userId;
             const fundId = parseInt(req.params.fundId as string);
             const transactionId = parseInt(req.params.transactionId as string);
-            const { transactionType, amount, description, transactionDate } = req.body;
+            const { transactionType, amount, description, transactionDate, month } = req.body;
 
             if (isNaN(fundId) || fundId <= 0){
                 res.status(400).json({ error: 'Invalid fund id format' });
@@ -171,8 +176,18 @@ export class FundTransactionController{
                 return;
             }
 
+            if (!month){
+                res.status(400).json({ error: 'Month is required' });
+                return;
+            }
+
             if (!isValidDate(transactionDate)){
                 res.status(400).json({ error: 'Invalid date format' });
+                return;
+            }
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
                 return;
             }
 
@@ -182,7 +197,6 @@ export class FundTransactionController{
                 return;
             }
 
-            const month = getMonth(transactionDate);
             const fundTransactionDTO: FundTransactionDTO = {
                 id: transactionId,
                 savingsFundId: fundId,
@@ -244,7 +258,7 @@ export class FundTransactionController{
             const userId = authRequest.user.userId;
             const savingsFundId = parseInt(req.params.fundId as string);
             const transactionDate = new Date().toISOString().split('T')[0];
-            const { amount, relatedFundId } = req.body;
+            const { amount, relatedFundId, month } = req.body;
 
             if (isNaN(savingsFundId) || savingsFundId <= 0){
                 res.status(400).json({ error: 'Invalid fund id format' });
@@ -263,7 +277,16 @@ export class FundTransactionController{
                 return;
             }
 
-            const month = getMonth(transactionDate);
+            if (!month){
+                res.status(400).json({ error: 'Month is required' });
+                return;
+            }
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
+                return;
+            }
+
             const sendingFund: FundTransactionDTO = {
                 savingsFundId,
                 transactionType: "transfer_out",
@@ -303,7 +326,7 @@ export class FundTransactionController{
             const userId = authRequest.user.userId;
             const savingsFundId = parseInt(req.params.fundId as string);
             const transactionDate = new Date().toISOString().split('T')[0];
-            const { amount } = req.body;
+            const { amount, month } = req.body;
 
             if (isNaN(savingsFundId) || savingsFundId <= 0){
                 res.status(400).json({ error: 'Invalid fund id format' });
@@ -316,7 +339,16 @@ export class FundTransactionController{
                 return;
             }
 
-            const month = getMonth(transactionDate);
+            if (!month){
+                res.status(400).json({ error: 'Month is required' });
+                return;
+            }
+
+            if (!isValidDate(month)){
+                res.status(400).json({ error: 'Invalid month format' });
+                return;
+            }
+
             const adjustBalanceTransaction: FundTransactionDTO = {
                 savingsFundId,
                 transactionType: "adjustment",
