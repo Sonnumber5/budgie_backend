@@ -29,6 +29,14 @@ export class FundTransactionService{
         return await this.fundTransactionDAO.findFundTransactions(userId, fundId);
     }
 
+    async getFundTransactionsByMonth(userId: number, fundId: number, month: string): Promise<FundTransaction[]>{
+        const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, fundId);
+        if (!existingFund){
+            throw new AppError('Savings fund not found', 404);
+        }
+        return await this.fundTransactionDAO.findFundTransactionsForMonth(userId, fundId, month);
+    }
+
     async getFundTransactionById(userId: number, transactionId: number, fundId: number): Promise<FundTransaction>{
         const existingFund = await this.savingsFundDAO.findSavingsFundById(userId, fundId);
         if (!existingFund){

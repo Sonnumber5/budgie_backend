@@ -16,7 +16,7 @@ export class FundTransactionController{
             }
             const userId = authRequest.user.userId;
             const fundId = parseInt(req.params.fundId as string);
-            const { transactionType, amount, description, transactionDate } = req.body;
+            const { transactionType, amount, description, transactionDate, month } = req.body;
 
             if (isNaN(fundId) || fundId <= 0){
                 res.status(400).json({ error: 'Invalid fund id format' });
@@ -34,6 +34,11 @@ export class FundTransactionController{
                 return;
             }
 
+            if (!month){
+                res.status(400).json({ error: 'Month date is required' });
+                return;
+            }
+
             if (!isValidDate(transactionDate)){
                 res.status(400).json({ error: 'Invalid date format' });
                 return;
@@ -44,7 +49,7 @@ export class FundTransactionController{
                 res.status(400).json({ error: 'Transaction type must be either contribution or expenditure' });
                 return;
             }
-            const month = getMonth(transactionDate);
+
             const fundTransactionDTO: FundTransactionDTO = {
                 savingsFundId: fundId,
                 transactionType,
@@ -73,16 +78,27 @@ export class FundTransactionController{
             }
             const userId = authRequest.user.userId;
             const fundId = parseInt(req.params.fundId as string);
+            let transactionArr;
 
             if (isNaN(fundId) || fundId <= 0){
                 res.status(400).json({ error: 'Invalid fund id format' });
                 return;
             }
 
-            const result = await this.fundTransactionService.getFundTransactions(userId, fundId);
+            const { month } = req.query;
+            if (typeof(month) === "string"){
+                if (!isValidDate(month)){
+                    res.status(400).json({ error: 'Invalid month format' });
+                    return
+                }
+                transactionArr = await this.fundTransactionService.getFundTransactionsByMonth(userId, fundId, month);
+            } else {
+                transactionArr = await this.fundTransactionService.getFundTransactions(userId, fundId);
+            }
+
             res.status(200).json({ 
                 message: 'Successfully retrieved transactions',
-                fundTransactions: result
+                fundTransactions: transactionArr
             });
         }catch(error: any){
             console.log('Error retrieving transactions', error);

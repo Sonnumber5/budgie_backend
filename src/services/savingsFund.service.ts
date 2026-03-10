@@ -35,7 +35,7 @@ export class SavingsFundService{
             throw new AppError('Savings fund id required', 404);
         }
         const activeSavingsFund = await this.savingsFundDAO.findSavingsFundByName(userId, savingsFundDTO.name);
-        if (activeSavingsFund){
+        if (activeSavingsFund && activeSavingsFund.id !== savingsFundDTO.id){
             throw new AppError('Active savings fund already exists', 409);
         }
         const result = await this.savingsFundDAO.updateSavingsFund(userId, savingsFundDTO);

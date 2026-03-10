@@ -15,10 +15,11 @@ export class SavingsFundController{
             const userId = authRequest.user.userId;
             const { name, goal } = req.body;
             
-            if (!name || !goal){
-                res.status(400).json({ error: 'name and goal are required' });
+            if (!name){
+                res.status(400).json({ error: 'name is required' });
                 return;
             }
+
             const parsedGoal = Number(goal);
             if (isNaN(parsedGoal) || parsedGoal <= 0) {
                 res.status(400).json({ error: 'Goal must be a positive number' });
@@ -97,8 +98,8 @@ export class SavingsFundController{
             const { name, goal } = req.body;
             const id = parseInt(req.params.id as string);
             
-            if (!name || !goal){
-                res.status(400).json({ error: 'name and goal are required' });
+            if (!name){
+                res.status(400).json({ error: 'name is required' });
                 return;
             }
             const parsedGoal = Number(goal);

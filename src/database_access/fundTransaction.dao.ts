@@ -34,6 +34,11 @@ export class FundTransactionDAO{
         return result.rows[0];
     }
 
+    async findFundTransactionsForMonth(userId: number, savingsFundId: number, month: string): Promise<FundTransaction[]>{
+        const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTIONS_BY_MONTH, [userId, savingsFundId, month]);
+        return result.rows;
+    }
+
     async updateFundTransaction(userId: number, fundTransactionDTO: FundTransactionDTO){
         const client = await pool.connect();
         try{

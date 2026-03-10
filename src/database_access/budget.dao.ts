@@ -25,7 +25,6 @@ export class BudgetDAO{
                 const newCategoryBudget = await client.query<CategoryBudget>(BudgetQueries.CREATE_CATEGORY_BUDGET, [id, current.categoryId, current.budgetedAmount]);
                 categoryBudgets.push(newCategoryBudget.rows[0])
             }
-            
 
             const newMonthlyBudget: MonthlyBudget = {
                 id,
@@ -131,13 +130,13 @@ export class BudgetDAO{
             }
             
             const { categoryId, month } = categoryBudgetResult.rows[0];
-            
-            // Delete related expenses
+
+            //Delete related expenses
             await client.query(
                 ExpenseQueries.DELETE_EXPENSES_BY_CATEGORY_AND_MONTH,
-                [categoryId, userId, month]
+                [userId, categoryId, month]
             );
-            
+
             // Delete the category budget
             const result = await client.query(
                 BudgetQueries.DELETE_CATEGORY_BUDGET, 

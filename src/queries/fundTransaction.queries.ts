@@ -6,6 +6,9 @@ export const FundTransactionQueries = {
     FROM savings_fund_transactions 
     WHERE user_id = $1 AND savings_fund_id = $2
     ORDER BY transaction_date DESC`,
+    FIND_FUND_TRANSACTIONS_BY_MONTH: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
+    FROM savings_fund_transactions 
+    WHERE user_id = $1 AND savings_fund_id = $2 AND month = $3`,
     FIND_FUND_TRANSACTION_BY_ID: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
     FROM savings_fund_transactions 
     WHERE user_id = $1 AND id = $2 AND savings_fund_id = $3`,
@@ -17,7 +20,7 @@ export const FundTransactionQueries = {
     FIND_CONTRIBUTION_SUM_FOR_MONTH: `SELECT COALESCE(SUM(amount), 0) AS total_contributions
     FROM savings_fund_transactions WHERE user_id = $1 AND month = $2 AND transaction_type = 'contribution'`,
     FIND_CONT_AND_EXP_QTY: `SELECT COUNT(*) AS total_records
-FROM savings_fund_transactions
-WHERE user_id = $1 AND savings_fund_id = $2
-AND transaction_type IN ('contribution', 'expenditure')`
-    }
+    FROM savings_fund_transactions
+    WHERE user_id = $1 AND savings_fund_id = $2
+    AND transaction_type IN ('contribution', 'expenditure')`
+}
