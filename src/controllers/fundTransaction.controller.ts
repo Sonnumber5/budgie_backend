@@ -326,10 +326,10 @@ export class FundTransactionController{
                 month,
                 relatedFundId: savingsFundId
             }
-            const transactions = await this.fundTransactionService.transferBalance(userId, sendingFund, receivingFund);
+            const fundTransactions = await this.fundTransactionService.transferBalance(userId, sendingFund, receivingFund);
             res.status(200).json({ 
                 message: 'Successfully transfered balance',
-                transactions
+                fundTransactions
             });
         }catch(error: any){
             console.log('Error transfering balance', error);
@@ -379,10 +379,10 @@ export class FundTransactionController{
                 month
             }
 
-            const transaction = await this.fundTransactionService.adjustBalance(userId, adjustBalanceTransaction);
+            const fundTransaction = await this.fundTransactionService.adjustBalance(userId, adjustBalanceTransaction);
             res.status(200).json({ 
                 message: 'Successfully adjusted balance',
-                transaction
+                fundTransaction
             });
         }catch(error: any){
             console.log('Error adjusting balance', error);
