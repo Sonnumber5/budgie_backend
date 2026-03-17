@@ -28,8 +28,13 @@ export class AccountBalanceDAO{
         return result.rowCount !== null && result.rowCount > 0;
     }
 
-    async resetAccountBalances(userId: number): Promise<boolean>{
+    async clearAccountBalances(userId: number): Promise<boolean>{
         const result = await pool.query<AccountBalance>(AccountBalanceQueries.DELETE_ALL_ACCOUNT_BALANCES, [userId]);
+        return result.rowCount !== null && result.rowCount > 0;
+    }
+
+    async resetAccountBalances(userId: number): Promise<boolean>{
+        const result = await pool.query<AccountBalance>(AccountBalanceQueries.RESET_ACCOUNT_BALANCES, [userId]);
         return result.rowCount !== null && result.rowCount > 0;
     }
 }

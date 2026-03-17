@@ -5,7 +5,8 @@ export const AccountBalanceQueries = {
     
     FIND_ACCOUNT_BALANCES: `SELECT id, account_name AS "accountName", account_type AS "accountType", balance, created_at AS "createdAt", updated_at AS "updatedAt"
     FROM account_balances
-    WHERE user_id = $1`,
+    WHERE user_id = $1
+    ORDER BY account_name ASC`,
     
     FIND_ACCOUNT_BALANCE_BY_ID: `SELECT id, account_name AS "accountName", account_type AS "accountType", balance, created_at AS "createdAt", updated_at AS "updatedAt"
     FROM account_balances
@@ -20,5 +21,9 @@ export const AccountBalanceQueries = {
     WHERE user_id = $1 AND id = $2`,
     
     DELETE_ALL_ACCOUNT_BALANCES: `DELETE from account_balances 
+    WHERE user_id = $1`,
+
+    RESET_ACCOUNT_BALANCES: `UPDATE account_balances 
+    SET balance = 0 
     WHERE user_id = $1`
 }

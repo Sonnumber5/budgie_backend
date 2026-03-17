@@ -7,7 +7,7 @@ export const AccountBalanceRoutes = (accountBalanceController: AccountBalanceCon
 
     router.post('/account-balances', authenticate, accountBalanceController.createAccountBalance);
     router.get('/account-balances', authenticate, accountBalanceController.getAccountBalances);
-    router.delete('/account-balances', authenticate, accountBalanceController.resetAccountBalance);
+    router.put('/account-balances', authenticate, accountBalanceController.resetAccountBalance);
     router.get('/account-balances/:id', authenticate, accountBalanceController.getAccountBalanceById);
     router.put('/account-balances/:id', authenticate, accountBalanceController.updateAccountBalance);
     router.delete('/account-balances/:id', authenticate, accountBalanceController.deleteAccountBalance);
