@@ -1,5 +1,5 @@
-import { FundTransactionDAO } from "../database_access/fundTransaction.dao";
-import { SavingsFundDAO } from "../database_access/savingsFund.dao";
+import { FundTransactionDAO } from "../dao/fundTransaction.dao";
+import { SavingsFundDAO } from "../dao/savingsFund.dao";
 import { FundTransactionQueries } from "../queries/fundTransaction.queries";
 import { FundTransaction, FundTransactionDTO, TransactionType } from "../types";
 import { AppError } from "../utils/AppError";
@@ -55,7 +55,7 @@ export class FundTransactionService{
 
     async updateFundTransaction(userId: number, fundTransactionDTO: FundTransactionDTO): Promise<FundTransaction>{
         if (!fundTransactionDTO.id){
-            throw new AppError('Transaction id required', 404);
+            throw new AppError('Transaction id required', 400);
         }
         const existingTransaction = await this.fundTransactionDAO.findFundTransactionById(userId, fundTransactionDTO.id, fundTransactionDTO.savingsFundId);
         if (!existingTransaction){

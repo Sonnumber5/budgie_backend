@@ -2,7 +2,7 @@ import { IncomeController } from "../controllers/income.controller";
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.authenticate";
 
-export const IncomeRoutes = (incomeController: IncomeController) => {
+export const incomeRoutes = (incomeController: IncomeController) => {
     const router = Router();
     
     router.get('/income/total', authenticate, incomeController.getMonthlyIncomeSum);

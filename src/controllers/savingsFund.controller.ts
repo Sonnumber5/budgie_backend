@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { SavingsFundService } from "../services/savingsFund.service";
 import { AuthRequest, SavingsFundDTO } from "../types";
 
 export class SavingsFundController{
     constructor (private savingsFundService: SavingsFundService){}
 
-    createSavingsFund = async (req: Request, res: Response): Promise<void> => {
+    createSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -14,7 +14,7 @@ export class SavingsFundController{
             }
             const userId = authRequest.user.userId;
             const { name, goal } = req.body;
-            
+
             if (!name){
                 res.status(400).json({ error: 'name is required' });
                 return;
@@ -30,17 +30,16 @@ export class SavingsFundController{
                 goal
             }
             const result = await this.savingsFundService.createSavingsFund(userId, fundToAdd);
-            res.status(201).json({ 
+            res.status(201).json({
                 message: 'Successfully created savings fund',
                 savingsFund: result
              });
-        }catch(error: any){
-            console.log('Error creating savings fund', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create savings fund' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getSavingsFundById = async (req: Request, res: Response): Promise<void> => {
+    getSavingsFundById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -55,17 +54,16 @@ export class SavingsFundController{
                 return;
             }
             const result = await this.savingsFundService.getSavingsFundById(userId, id);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved savings fund',
                 savingsFund: result
             });
-        }catch(error: any){
-            console.log('Error retrieving savings fund', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve savings fund' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getSavingsFunds = async (req: Request, res: Response): Promise<void> => {
+    getSavingsFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -77,17 +75,16 @@ export class SavingsFundController{
 
             const result = await this.savingsFundService.getSavingsFunds(userId, includeArchived);
 
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved savings funds',
                 savingsFunds: result
             });
-        }catch(error: any){
-            console.log('Error retrieving savings funds', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve savings funds' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    updateSavingsFund = async (req: Request, res: Response): Promise<void> => {
+    updateSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -97,7 +94,7 @@ export class SavingsFundController{
             const userId = authRequest.user.userId;
             const { name, goal } = req.body;
             const id = parseInt(req.params.id as string);
-            
+
             if (!name){
                 res.status(400).json({ error: 'name is required' });
                 return;
@@ -113,17 +110,16 @@ export class SavingsFundController{
                 goal
             }
             const result = await this.savingsFundService.updateSavingsFund(userId, fundToUpdate);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully updated savings fund',
                 savingsFund: result
              });
-        }catch(error: any){
-            console.log('Error updated savings fund', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update savings fund' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    deleteSavingsFund = async (req: Request, res: Response): Promise<void> => {
+    deleteSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -141,9 +137,8 @@ export class SavingsFundController{
             const deleted = await this.savingsFundService.deleteSavingsFund(userId, id);
 
             res.status(200).json({ message: deleted ? 'Successfully deleted savings fund' : 'Successfully archived savings fund'});
-        }catch(error: any){
-            console.log('Error deleting savings fund', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete savings fund' });
+        } catch(error: any){
+            next(error);
         }
     }
 }

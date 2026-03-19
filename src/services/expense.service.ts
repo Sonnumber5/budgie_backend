@@ -1,5 +1,5 @@
-import { CategoryDAO } from "../database_access/category.dao";
-import { ExpenseDAO } from "../database_access/expense.dao";
+import { CategoryDAO } from "../dao/category.dao";
+import { ExpenseDAO } from "../dao/expense.dao";
 import { Expense, ExpenseDTO } from "../types";
 import { AppError } from "../utils/AppError";
 

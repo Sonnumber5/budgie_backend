@@ -1,14 +1,13 @@
-import { RequestHandler, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CategoryService } from "../services/category.service";
 import { AuthRequest, CategoryDTO } from "../types";
 
 export class CategoryController{
 
     constructor(private categoryService: CategoryService) {}
-    
-    createCategory = async (req: Request, res: Response): Promise<void>=> {
-        try{
 
+    createCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
                 res.status(401).json({ error: 'Unauthorized' });
@@ -30,16 +29,15 @@ export class CategoryController{
 
             const result = await this.categoryService.createCategory(categoryDTO);
             res.status(201).json({
-                message: 'Created category successfully', 
+                message: 'Created category successfully',
                 category: result
             })
         } catch(error: any){
-            console.error('Create category error:', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create category' });
+            next(error);
         }
     }
 
-    getCategories = async (req: Request, res: Response): Promise<void> => {
+    getCategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -56,12 +54,11 @@ export class CategoryController{
             });
 
         } catch(error: any){
-            console.error('Error retrieving categories', error);
-            res.status(error.statusCode || 500).json({ error: error.message  || 'Failed to retreive categories' });
+            next(error);
         }
     }
 
-    getCategoryById = async (req: Request, res: Response): Promise<void>=> {
+    getCategoryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -69,7 +66,7 @@ export class CategoryController{
                 return;
             }
             const userId = authRequest.user.userId;
-            
+
             const categoryId = parseInt(req.params.id as string);
 
             if (isNaN(categoryId)){
@@ -78,17 +75,16 @@ export class CategoryController{
             }
             const result = await this.categoryService.getCategoryById(userId, categoryId);
 
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Category retrieved successfully',
                 category: result
             });
-        }catch(error: any){
-            console.log('Error retrieving category', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve category' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    updateCategory = async (req: Request, res: Response): Promise<void> => {
+    updateCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -96,7 +92,7 @@ export class CategoryController{
                 return;
             }
             const userId = authRequest.user.userId;
-            
+
             const id = parseInt(req.params.id as string);
             const { name } = req.body;
 
@@ -116,17 +112,16 @@ export class CategoryController{
             }
 
             const result = await this.categoryService.updateCategory(categoryDTO);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Category updated successfully',
                 category: result
              })
         } catch(error: any){
-            console.log('Error updating category', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update category' })
+            next(error);
         }
     }
 
-    deleteCategory = async (req: Request, res: Response): Promise<void> => {
+    deleteCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -136,7 +131,7 @@ export class CategoryController{
             const userId = authRequest.user.userId;
 
             const categoryId = parseInt(req.params.id as string);
-            
+
             if (isNaN(categoryId)){
                 res.status(400).json({ error: 'Invalid category id' });
                 return;
@@ -145,9 +140,8 @@ export class CategoryController{
             await this.categoryService.deleteCategory(categoryId, userId);
 
             res.status(200).json({ message: 'Category successfully deleted' });
-        }catch(error: any){
-            console.log('Error deleting category', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete category' });
+        } catch(error: any){
+            next(error);
         }
     }
 }

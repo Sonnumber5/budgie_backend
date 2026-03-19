@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ExpenseController } from "../controllers/expense.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
-export const ExpenseRoutes = (expenseController: ExpenseController) => {
+export const expenseRoutes = (expenseController: ExpenseController) => {
     const router = Router();
 
     router.get('/expenses/total', authenticate, expenseController.getMonthlyExpenseSum);

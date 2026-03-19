@@ -1,4 +1,4 @@
-import { AccountBalanceDAO } from "../database_access/accountBalance.dao";
+import { AccountBalanceDAO } from "../dao/accountBalance.dao";
 import { AccountBalance, AccountBalanceDTO } from "../types";
 import { AppError } from "../utils/AppError";
 

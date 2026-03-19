@@ -1,13 +1,12 @@
 import { FundTransactionService } from "../services/fundTransaction.service";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AuthRequest, FundTransactionDTO, TransactionType } from "../types";
 import { isValidDate } from "../utils/date";
-import { getMonth } from "../utils/date";
 
 export class FundTransactionController{
     constructor(private fundTransactionService: FundTransactionService){}
 
-    createFundTransaction = async (req: Request, res: Response): Promise<void> => {
+    createFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -25,10 +24,10 @@ export class FundTransactionController{
 
             const parsedAmount = Number(amount);
             if (isNaN(parsedAmount) || parsedAmount <= 0){
-                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                res.status(400).json({ error: 'amount is required and must be a positive number' });
                 return;
             }
-            
+
             if (!transactionDate){
                 res.status(400).json({ error: 'Transaction date is required' });
                 return;
@@ -64,17 +63,16 @@ export class FundTransactionController{
                 month
             }
             const result = await this.fundTransactionService.createFundTransaction(userId, fundTransactionDTO);
-            res.status(201).json({ 
+            res.status(201).json({
                 message: (transactionType === "contribution") ? 'successfully added to fund' : 'successfully expended from fund',
                 fundTransaction: result
             });
-        }catch(error: any){
-            console.log('Error creating transaction', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create transaction' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getFundTransactions = async (req: Request, res: Response): Promise<void> => {
+    getFundTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -101,17 +99,16 @@ export class FundTransactionController{
                 transactionArr = await this.fundTransactionService.getFundTransactions(userId, fundId);
             }
 
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved transactions',
                 fundTransactions: transactionArr
             });
-        }catch(error: any){
-            console.log('Error retrieving transactions', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transactions' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getAllTransactionsForActiveFunds = async (req: Request, res: Response): Promise<void> => {
+    getAllTransactionsForActiveFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -122,17 +119,16 @@ export class FundTransactionController{
 
             const allTransactions = await this.fundTransactionService.getAllTransactionsForActiveFunds(userId);
 
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved transactions',
                 activeFundTransactions: allTransactions
             });
-        }catch(error: any){
-            console.log('Error retrieving transactions', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transactions' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getFundTransactionById = async (req: Request, res: Response): Promise<void> => {
+    getFundTransactionById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -154,17 +150,16 @@ export class FundTransactionController{
             }
 
             const result = await this.fundTransactionService.getFundTransactionById(userId, transactionId, fundId);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved transaction',
                 fundTransaction: result
             });
-        }catch(error: any){
-            console.log('Error retrieving transaction', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve transaction' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    updateFundTransaction = async (req: Request, res: Response): Promise<void> => {
+    updateFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -182,16 +177,16 @@ export class FundTransactionController{
             }
 
             if (isNaN(transactionId) || transactionId <= 0){
-                res.status(400).json({ error: 'Invalid fund id format' });
+                res.status(400).json({ error: 'Invalid transaction id format' });
                 return;
             }
 
             const parsedAmount = Number(amount);
             if (isNaN(parsedAmount) || parsedAmount <= 0){
-                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                res.status(400).json({ error: 'amount is required and must be a positive number' });
                 return;
             }
-            
+
             if (!transactionDate){
                 res.status(400).json({ error: 'Transaction date is required' });
                 return;
@@ -228,17 +223,16 @@ export class FundTransactionController{
                 month
             }
             const result = await this.fundTransactionService.updateFundTransaction(userId, fundTransactionDTO);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'successfully updated fund',
                 fundTransaction: result
             });
-        }catch(error: any){
-            console.log('Error updating transaction', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update transaction' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    deleteFundTransaction = async (req: Request, res: Response): Promise<void> => {
+    deleteFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -260,16 +254,15 @@ export class FundTransactionController{
             }
 
             await this.fundTransactionService.deleteFundTransaction(userId, transactionId, fundId);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully deleted transaction',
             });
-        }catch(error: any){
-            console.log('Error deleting transaction', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete transaction' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    transferBalance = async (req: Request, res: Response): Promise<void> => {
+    transferBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -294,7 +287,7 @@ export class FundTransactionController{
 
             const parsedAmount = Number(amount);
             if (isNaN(parsedAmount) || parsedAmount <= 0){
-                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                res.status(400).json({ error: 'amount is required and must be a positive number' });
                 return;
             }
 
@@ -327,17 +320,16 @@ export class FundTransactionController{
                 relatedFundId: savingsFundId
             }
             const fundTransactions = await this.fundTransactionService.transferBalance(userId, sendingFund, receivingFund);
-            res.status(200).json({ 
-                message: 'Successfully transfered balance',
+            res.status(200).json({
+                message: 'Successfully transferred balance',
                 fundTransactions
             });
-        }catch(error: any){
-            console.log('Error transfering balance', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to transfer balance' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    adjustBalance = async (req: Request, res: Response): Promise<void> => {
+    adjustBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -356,7 +348,7 @@ export class FundTransactionController{
 
             const parsedAmount = Number(amount);
             if (isNaN(parsedAmount) || parsedAmount <= 0){
-                res.status(400).json({ error: 'amount is required and must be a postive number' });
+                res.status(400).json({ error: 'amount is required and must be a positive number' });
                 return;
             }
 
@@ -380,17 +372,16 @@ export class FundTransactionController{
             }
 
             const fundTransaction = await this.fundTransactionService.adjustBalance(userId, adjustBalanceTransaction);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully adjusted balance',
                 fundTransaction
             });
-        }catch(error: any){
-            console.log('Error adjusting balance', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to adjust balance' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getContributionSumForMonth = async (req: Request, res: Response): Promise<void> => {
+    getContributionSumForMonth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -401,18 +392,17 @@ export class FundTransactionController{
             const month = req.query.month as string;
 
             if (!isValidDate(month)){
-                res.status(400).json({ error: 'invalid date format' });
+                res.status(400).json({ error: 'Invalid date format' });
                 return;
             }
             const totalContributions = await this.fundTransactionService.getContributionSumForMonth(userId, month);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved the sum of all contributions for the month',
                 totalContributions
             })
-        
+
         } catch(error: any){
-            console.log('Error retrieving contribution sum', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve contribution sum' });
+            next(error);
         }
     }
 

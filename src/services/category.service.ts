@@ -1,4 +1,4 @@
-import { CategoryDAO } from "../database_access/category.dao";
+import { CategoryDAO } from "../dao/category.dao";
 import { Category, CategoryDTO } from "../types";
 import { AppError } from "../utils/AppError";
 
@@ -43,7 +43,7 @@ export class CategoryService{
     async getCategoryByName(userId: number, name: string): Promise<Category>{
         let category = await this.categoryDAO.findCategoryByName(userId, name);
         if (!category){
-            throw new AppError("Failed to create category", 500);
+            throw new AppError("Category not found", 404);
         }
         return category;
     }

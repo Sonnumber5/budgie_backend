@@ -1,12 +1,12 @@
-import { RequestHandler, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
-import { AuthRequest, loginDTO, RegisterDTO, User } from "../types";
+import { AuthRequest, LoginDTO, RegisterDTO } from "../types";
 
 export class AuthController{
 
     constructor(private authService: AuthService){}
 
-    register = async (req: Request, res: Response): Promise<void> => {
+    register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const { email, password, name } = req.body;
 
@@ -17,7 +17,7 @@ export class AuthController{
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)){
-                res.status(400).json({ Error: 'Invalid email format' });
+                res.status(400).json({ error: 'Invalid email format' });
                 return;
             }
 
@@ -47,7 +47,7 @@ export class AuthController{
             }
 
             const userToRegister: RegisterDTO = {
-                email, 
+                email,
                 password,
                 name
             }
@@ -58,20 +58,19 @@ export class AuthController{
                 user: result.user
             });
         } catch(error: any){
-            console.error('Registration error:', error);
-            res.status(error.statusCode || 400).json({ error: error.message || 'Error registering user' })
+            next(error);
         }
     }
 
-    login = async (req: Request, res: Response): Promise<void> => {
+    login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const {email, password} = req.body;
-            
+
             if (!email || !password){
                 res.status(400).json({ error: 'Email and password are required' });
                 return;
             }
-            const loginCredentials: loginDTO = {
+            const loginCredentials: LoginDTO = {
                 email,
                 password
             }
@@ -90,12 +89,11 @@ export class AuthController{
                 user: result.user
             });
         } catch(error: any){
-            console.error('Login error:', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Login failed' });
+            next(error);
         }
     }
 
-    logout = (req: Request, res: Response): void => {
+    logout = (_req: Request, res: Response): void => {
         res.clearCookie('token');
         res.json({ message: 'Logout successful' });
     }

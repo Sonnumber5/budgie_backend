@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { AuthDAO } from '../database_access/auth.dao';
-import { RegisterDTO, loginDTO, AuthResponse } from '../types';
+import { AuthDAO } from '../dao/auth.dao';
+import { RegisterDTO, LoginDTO, AuthResponse } from '../types';
 import { AppError } from '../utils/AppError';
 
 export class AuthService{
@@ -30,7 +30,7 @@ export class AuthService{
         };
     }
 
-    async login(loginDTO: loginDTO): Promise<AuthResponse>{
+    async login(loginDTO: LoginDTO): Promise<AuthResponse>{
 
         const user = await this.authDAO.findUserByEmail(loginDTO.email);
         if (!user){

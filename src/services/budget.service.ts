@@ -1,8 +1,8 @@
-import { CategoryDAO } from "../database_access/category.dao";
-import { BudgetDAO } from "../database_access/budget.dao";
+import { CategoryDAO } from "../dao/category.dao";
+import { BudgetDAO } from "../dao/budget.dao";
 import { CategoryBudget, CategoryBudgetDTO, CategoryDTO, MonthlyBudget, MonthlyBudgetDTO } from "../types";
 import { AppError } from "../utils/AppError";
-import { ExpenseDAO } from "../database_access/expense.dao";
+import { ExpenseDAO } from "../dao/expense.dao";
 
 export class BudgetService{
     constructor(private budgetDAO: BudgetDAO, private categoryDAO: CategoryDAO, private expenseDAO: ExpenseDAO){}

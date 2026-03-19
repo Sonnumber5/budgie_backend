@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { BudgetService } from "../services/budget.service";
 import { AuthRequest, CategoryBudgetDTO, MonthlyBudgetDTO } from "../types";
 import { isValidDate } from "../utils/date";
 import { CategoryService } from "../services/category.service";
 
-export class MonthlyBudgetController{
+export class BudgetController{
     constructor(private budgetService: BudgetService, private categoryService: CategoryService){}
 
-    createMonthlyBudget = async (req: Request, res: Response): Promise<void> => {
+    createMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -49,12 +49,12 @@ export class MonthlyBudgetController{
                     res.status(400).json({ error: 'Each category budget must have categoryName and budgetedAmount' });
                     return;
                 }
-                
+
                 if (categoryBudget.budgetedAmount <= 0){
                     res.status(400).json({ error: 'Budgeted amounts must be positive' });
                     return;
                 }
-                
+
                 const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
 
                 const newCategoryBudgetDTO: CategoryBudgetDTO = {
@@ -79,12 +79,11 @@ export class MonthlyBudgetController{
             });
 
         } catch(error: any){
-            console.log('Error creating monthly budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create monthly budget' });
+            next(error);
         }
     }
 
-    getBudgetByMonthlyBudgetId = async (req: Request, res: Response): Promise<void> => {
+    getBudgetByMonthlyBudgetId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -106,12 +105,11 @@ export class MonthlyBudgetController{
                 budget: result
             });
         } catch(error: any){
-            console.log('Error retrieving budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve budget' });
+            next(error);
         }
     }
 
-    getBudgetByMonth = async (req: Request, res: Response): Promise<void> => {
+    getBudgetByMonth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -130,7 +128,7 @@ export class MonthlyBudgetController{
                 res.status(400).json({ error: 'Month parameter is required' });
                 return;
             }
-            
+
             const result = await this.budgetService.getMonthlyBudgetWithCategoriesByMonth(userId, month);
 
             res.status(200).json({
@@ -138,14 +136,11 @@ export class MonthlyBudgetController{
                 budget: result
             });
         } catch(error: any){
-            if (error.statusCode !== 404) {
-                console.log('Error retrieving budget', error);
-            }
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve budget' });
+            next(error);
         }
     }
 
-    updateMonthlyBudget = async (req: Request, res: Response): Promise<void> => {
+    updateMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -184,7 +179,7 @@ export class MonthlyBudgetController{
                         res.status(400).json({ error: 'Category name is required for new category budgets' });
                         return;
                     }
-                    
+
                     if (categoryBudget.budgetedAmount === undefined || categoryBudget.budgetedAmount <= 0){
                         res.status(400).json({ error: 'Budgeted amount must be a positive number' });
                         return;
@@ -216,12 +211,11 @@ export class MonthlyBudgetController{
             });
 
         } catch(error: any){
-            console.log('Error updating monthly budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update monthly budget' });
+            next(error);
         }
     }
 
-    deleteMonthlyBudget = async (req: Request, res: Response): Promise<void> => {
+    deleteMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -236,13 +230,12 @@ export class MonthlyBudgetController{
             }
             await this.budgetService.deleteMonthlyBudget(userId, id);
             res.status(200).json({ message: 'Monthly budget successfully deleted' });
-        }catch(error: any){
-            console.log('Error deleting monthly budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete monthly budget' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getCategoryBudgetById = async (req: Request, res: Response): Promise<void> => {
+    getCategoryBudgetById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -258,17 +251,16 @@ export class MonthlyBudgetController{
             }
 
             const result = await this.budgetService.getCategoryBudgetById(userId, id);
-            res.status(200).json({ 
-                message: 'Successfully retrieved category budget', 
+            res.status(200).json({
+                message: 'Successfully retrieved category budget',
                 categoryBudget: result
             });
-        }catch(error: any){
-            console.log('Error retrieving category budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve category budget' });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    deleteCategoryBudget = async (req: Request, res: Response): Promise<void> => {
+    deleteCategoryBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -285,12 +277,11 @@ export class MonthlyBudgetController{
             await this.budgetService.deleteCategoryBudget(userId, id);
             res.status(200).json({ message: 'Successfully deleted category budget and related expenses' });
         } catch(error: any){
-            console.log('Error deleting category budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete category budget' });
+            next(error);
         }
     }
 
-    updateCategoryBudget = async (req: Request, res: Response): Promise<void> => {
+    updateCategoryBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -312,13 +303,12 @@ export class MonthlyBudgetController{
             }
 
             const updatedCategoryBudget = await this.budgetService.updateCategoryBudget(budgetedAmount, id, userId);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully updated category budget',
                 categoryBudget: updatedCategoryBudget
             });
         } catch(error: any){
-            console.log('Error updating category budget', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update category budget' });
+            next(error);
         }
     }
 }

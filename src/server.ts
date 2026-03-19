@@ -1,55 +1,52 @@
 import dotenv from 'dotenv';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import helmet from 'helmet'; 
-import pool from './database';
+import helmet from 'helmet';
 import { authRoutes } from './routes/auth.routes';
-import { AuthDAO } from './database_access/auth.dao';
+import { AuthDAO } from './dao/auth.dao';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { categoryRoutes } from './routes/category.routes';
 import { CategoryController } from './controllers/category.controller';
-import { CategoryDAO } from './database_access/category.dao';
+import { CategoryDAO } from './dao/category.dao';
 import { CategoryService } from './services/category.service';
-import { IncomeDAO } from './database_access/income.dao';
+import { IncomeDAO } from './dao/income.dao';
 import { IncomeService } from './services/income.service';
 import { IncomeController } from './controllers/income.controller';
-import { IncomeRoutes } from './routes/income.routes';
-import { ExpenseDAO } from './database_access/expense.dao';
+import { incomeRoutes } from './routes/income.routes';
+import { ExpenseDAO } from './dao/expense.dao';
 import { ExpenseService } from './services/expense.service';
 import { ExpenseController } from './controllers/expense.controller';
-import { ExpenseRoutes } from './routes/expense.routes';
-import { BudgetDAO } from './database_access/budget.dao';
+import { expenseRoutes } from './routes/expense.routes';
+import { BudgetDAO } from './dao/budget.dao';
 import { BudgetService } from './services/budget.service';
-import { MonthlyBudgetController } from './controllers/budget.controller';
-import { BudgetRoutes } from './routes/budget.routes';
-import { SavingsFundDAO } from './database_access/savingsFund.dao';
+import { BudgetController } from './controllers/budget.controller';
+import { budgetRoutes } from './routes/budget.routes';
+import { SavingsFundDAO } from './dao/savingsFund.dao';
 import { SavingsFundService } from './services/savingsFund.service';
 import { SavingsFundController } from './controllers/savingsFund.controller';
-import { SavingsFundRoutes } from './routes/savingsFund.routes';
-import { FundTransactionDAO } from './database_access/fundTransaction.dao';
+import { savingsFundRoutes } from './routes/savingsFund.routes';
+import { FundTransactionDAO } from './dao/fundTransaction.dao';
 import { FundTransactionService } from './services/fundTransaction.service';
 import { FundTransactionController } from './controllers/fundTransaction.controller';
-import { FundTransactionRoutes } from './routes/fundTransaction.routes';
-import { AccountBalanceDAO } from './database_access/accountBalance.dao';
+import { fundTransactionRoutes } from './routes/fundTransaction.routes';
+import { AccountBalanceDAO } from './dao/accountBalance.dao';
 import { AccountBalanceService } from './services/accountBalance.service';
 import { AccountBalanceController } from './controllers/accountBalance.controller';
-import { AccountBalanceRoutes } from './routes/accountBalance.routes';
-
-require("dotenv").config();
+import { accountBalanceRoutes } from './routes/accountBalance.routes';
 
 dotenv.config();
 
-const app = express(); // Creates an instance of an Express application
-const port = 3001; // Sets the port number for the app to listen on
+const app = express();
+const port = 3001;
 
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
 
-app.use(cookieParser());  
+app.use(cookieParser());
 
 // Parses JSON request bodies
 app.use(express.json());
@@ -57,9 +54,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Add security-related HTTP headers
-//app.use(helmet());
+app.use(helmet());
 
-//dependency injection
+// Dependency injection
 const authDAO = new AuthDAO();
 const authService = new AuthService(authDAO);
 const authController = new AuthController(authService);
@@ -74,7 +71,7 @@ const expenseService = new ExpenseService(expenseDAO, categoryDAO);
 const expenseController = new ExpenseController(expenseService, categoryService);
 const budgetDAO = new BudgetDAO();
 const budgetService = new BudgetService(budgetDAO, categoryDAO, expenseDAO);
-const budgetController = new MonthlyBudgetController(budgetService, categoryService);
+const budgetController = new BudgetController(budgetService, categoryService);
 const fundTransactionDAO = new FundTransactionDAO();
 const savingsFundDAO = new SavingsFundDAO();
 const fundTransactionService = new FundTransactionService(fundTransactionDAO, savingsFundDAO);
@@ -85,13 +82,15 @@ const accountBalanceDAO = new AccountBalanceDAO();
 const accountBalanceService = new AccountBalanceService(accountBalanceDAO);
 const accountBalanceController = new AccountBalanceController(accountBalanceService);
 
-
-console.log(process.env.DB_HOST);
-
-
-// Mount routers 
+// Mount routers
 app.use('/api/auth', authRoutes(authController));
-app.use('/api', categoryRoutes(categoryController), IncomeRoutes(incomeController), ExpenseRoutes(expenseController), BudgetRoutes(budgetController), FundTransactionRoutes(fundTransactionController), SavingsFundRoutes(savingsFundController), AccountBalanceRoutes(accountBalanceController));
+app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController));
+
+// Global error handler
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    res.status(err.statusCode || 500).json({ error: err.message || 'Internal server error' });
+});
+
 // Start the Express server
 app.listen(port, () => {
     console.log(`budgie_API listening at http://localhost:${port}`);

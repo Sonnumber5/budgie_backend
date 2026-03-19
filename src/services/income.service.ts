@@ -1,4 +1,4 @@
-import { IncomeDAO } from "../database_access/income.dao";
+import { IncomeDAO } from "../dao/income.dao";
 import { Income, IncomeDTO } from "../types";
 import { AppError } from "../utils/AppError";
 

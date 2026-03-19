@@ -1,12 +1,12 @@
 import { AccountBalanceService } from "../services/accountBalance.service";
-import { AccountBalance, AccountBalanceDTO, AccountType, AuthRequest } from "../types";
-import { Request, Response } from "express";
+import { AccountBalanceDTO, AccountType, AuthRequest } from "../types";
+import { Request, Response, NextFunction } from "express";
 
 
 export class AccountBalanceController{
     constructor(private accountBalanceService: AccountBalanceService){}
 
-    createAccountBalance = async (req: Request, res: Response): Promise<void> => {
+    createAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -46,12 +46,11 @@ export class AccountBalanceController{
                 accountBalance: result
             });
         } catch(error: any){
-            console.log('Error creating account balance', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create account balance' });
+            next(error);
         }
     }
 
-    getAccountBalances = async (req: Request, res: Response): Promise<void> => {
+    getAccountBalances = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -67,12 +66,11 @@ export class AccountBalanceController{
                 accountBalances: result
             });
         } catch(error: any){
-            console.log('Error retrieving account balances', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve account balances' });
+            next(error);
         }
     }
 
-    getAccountBalanceById = async (req: Request, res: Response): Promise<void> => {
+    getAccountBalanceById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -94,12 +92,11 @@ export class AccountBalanceController{
                 accountBalance: result
             });
         } catch(error: any){
-            console.log('Error retrieving account balances', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve account balances' });
+            next(error);
         }
     }
 
-    updateAccountBalance = async (req: Request, res: Response): Promise<void> => {
+    updateAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -119,7 +116,6 @@ export class AccountBalanceController{
                 res.status(400).json({ error: 'id is required' });
                 return;
             }
-
 
             const validAccountTypes: AccountType[] = ["Asset", "Liability"];
             if (!accountType || !validAccountTypes.includes(accountType)){
@@ -146,12 +142,11 @@ export class AccountBalanceController{
                 accountBalance: result
             });
         } catch(error: any){
-            console.log('Error updating account balance', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update account balance' });
+            next(error);
         }
     }
 
-    deleteAccountBalance = async (req: Request, res: Response): Promise<void> => {
+    deleteAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -170,12 +165,11 @@ export class AccountBalanceController{
 
             res.status(200).json({ message: 'Successfully deleted account balance' });
         } catch(error: any){
-            console.log('Error deleting account balances', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete account balances' });
+            next(error);
         }
     }
 
-    resetAccountBalance = async (req: Request, res: Response): Promise<void> => {
+    resetAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -188,8 +182,7 @@ export class AccountBalanceController{
 
             res.status(200).json({ message: 'Successfully reset account balances' });
         } catch(error: any){
-            console.log('Error resetting account balances', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to reset account balances' });
+            next(error);
         }
     }
 }

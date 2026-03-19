@@ -1,18 +1,18 @@
 import { Router } from "express"
-import { MonthlyBudgetController } from "../controllers/budget.controller";
+import { BudgetController } from "../controllers/budget.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
-export const BudgetRoutes = (monthlyBudgetController: MonthlyBudgetController) => {
+export const budgetRoutes = (budgetController: BudgetController) => {
     const router = Router();
 
-    router.post('/budgets/monthly', authenticate, monthlyBudgetController.createMonthlyBudget);
-    router.get('/budgets/monthly/:id', authenticate, monthlyBudgetController.getBudgetByMonthlyBudgetId);
-    router.get('/budgets/monthly/', authenticate, monthlyBudgetController.getBudgetByMonth);
-    router.put('/budgets/monthly/:id', authenticate, monthlyBudgetController.updateMonthlyBudget);
-    router.delete('/budgets/monthly/:id', authenticate, monthlyBudgetController.deleteMonthlyBudget);
-    router.get('/budgets/categories/:id', authenticate, monthlyBudgetController.getCategoryBudgetById);
-    router.put('/budgets/categories/:id', authenticate, monthlyBudgetController.updateCategoryBudget);
-    router.delete('/budgets/categories/:id', authenticate, monthlyBudgetController.deleteCategoryBudget);
+    router.post('/budgets/monthly', authenticate, budgetController.createMonthlyBudget);
+    router.get('/budgets/monthly/:id', authenticate, budgetController.getBudgetByMonthlyBudgetId);
+    router.get('/budgets/monthly/', authenticate, budgetController.getBudgetByMonth);
+    router.put('/budgets/monthly/:id', authenticate, budgetController.updateMonthlyBudget);
+    router.delete('/budgets/monthly/:id', authenticate, budgetController.deleteMonthlyBudget);
+    router.get('/budgets/categories/:id', authenticate, budgetController.getCategoryBudgetById);
+    router.put('/budgets/categories/:id', authenticate, budgetController.updateCategoryBudget);
+    router.delete('/budgets/categories/:id', authenticate, budgetController.deleteCategoryBudget);
 
     return router;
 }

@@ -1,14 +1,13 @@
 import { IncomeService } from "../services/income.service";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AuthRequest, IncomeDTO } from "../types";
 import { isValidDate, getMonth } from "../utils/date";
-import { AppError } from "../utils/AppError";
 
 
 export class IncomeController{
     constructor(private incomeService: IncomeService){}
 
-    createIncome = async (req: Request, res: Response): Promise<void>=> {
+    createIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -57,13 +56,12 @@ export class IncomeController{
             });
 
         } catch(error: any){
-            console.log('Error creating income', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create income' });
+            next(error);
         }
 
     }
 
-    getIncome = async (req: Request, res: Response): Promise<void> => {
+    getIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -85,18 +83,17 @@ export class IncomeController{
             else{
                 incomeArr = await this.incomeService.getAllIncome(userId);
             }
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Income retrieved successfully',
                 income: incomeArr
             });
 
         } catch(error: any){
-            console.log('Error retrieving income', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+            next(error);
         }
     }
 
-    getIncomeById = async (req: Request, res: Response): Promise<void> => {
+    getIncomeById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -112,17 +109,16 @@ export class IncomeController{
             }
 
             const income = await this.incomeService.getIncomeById(userId, incomeId);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved income',
                 income: income
              })
         } catch(error: any){
-            console.log('Error retrieving income', error),
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+            next(error);
         }
     }
 
-    updateIncome = async (req: Request, res: Response): Promise<void> => {
+    updateIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -175,17 +171,16 @@ export class IncomeController{
                 res.status(404).json({ error: 'Income not found' });
                 return;
             }
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Income updated successfully',
                 income: newIncome
              });
         } catch(error: any){
-            console.log('Error updating income', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update income' });
+            next(error);
         }
     }
 
-    deleteIncome = async (req: Request, res: Response): Promise<void> => {
+    deleteIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -205,12 +200,11 @@ export class IncomeController{
 
             res.status(200).json({ message: 'Income successfully deleted' });
         } catch(error: any){
-            console.log('Error deleting income', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to delete income' });
+            next(error);
         }
     }
 
-    getMonthlyIncomeSum = async (req: Request, res: Response): Promise<void> => {
+    getMonthlyIncomeSum = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -222,18 +216,17 @@ export class IncomeController{
             const month = req.query.month as string;
 
             if (!isValidDate(month)){
-                res.status(400).json({ error: 'invalid date format' });
+                res.status(400).json({ error: 'Invalid date format' });
                 return;
             }
 
             const incomeSum = await this.incomeService.getMonthlyIncomeSum(userId, month)
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved income total',
                 incomeSum
              })
         } catch(error: any){
-            console.log('Error retrieving income', error),
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve income' });
+            next(error);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ExpenseService } from "../services/expense.service";
 import { AuthRequest, ExpenseDTO } from "../types";
 import { CategoryService } from "../services/category.service";
@@ -7,7 +7,7 @@ import { getMonth, isValidDate } from "../utils/date";
 export class ExpenseController{
     constructor(private expenseService: ExpenseService, private categoryService: CategoryService){}
 
-    createExpense = async (req: Request, res: Response): Promise<void> => {
+    createExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -17,7 +17,7 @@ export class ExpenseController{
             const userId = authRequest.user.userId;
 
             const { existingCategoryId, vendor, amount, description, expenseDate, month } = req.body;
-            
+
             let category;
 
             if (!existingCategoryId){
@@ -30,7 +30,7 @@ export class ExpenseController{
                 res.status(500).json({ error: 'Default category not found' });
                 return;
             }
-            
+
             let categoryId = category.id;
 
             if (!vendor || !amount || !expenseDate) {
@@ -57,25 +57,24 @@ export class ExpenseController{
                 userId,
                 categoryId,
                 vendor,
-                amount, 
+                amount,
                 description,
                 expenseDate,
                 month
             }
 
             const result = await this.expenseService.createExpense(newExpense);
-            res.status(201).json({ 
+            res.status(201).json({
                 message: 'Expense created successfully',
                 expense: result
              })
 
         } catch(error: any){
-            console.log('Error creating expense', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to create expense' });
+            next(error);
         }
     }
 
-    getExpenses = async (req: Request, res: Response): Promise<void> => {
+    getExpenses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -88,7 +87,7 @@ export class ExpenseController{
             const { month } = req.query;
             if (typeof(month) === "string"){
                 if (!isValidDate(month as string)){
-                    res.status(400).json({ error: 'invalid date format' });
+                    res.status(400).json({ error: 'Invalid date format' });
                     return;
                 }
                 expensesArr = await this.expenseService.getExpensesByDate(userId, month);
@@ -100,40 +99,38 @@ export class ExpenseController{
                 expenses: expensesArr
             });
         } catch(error: any){
-            console.log('Error retrieving expenses', error);
-            res.status(error.statusCode || 500).json({ error: error.message || "Failed to retrieve expenses" });
+            next(error);
         }
     }
 
-    getExpenseById = async (req: Request, res: Response): Promise<void> => {
+    getExpenseById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
-                res.status(400).json({ error: 'Unauthorized' });
+                res.status(401).json({ error: 'Unauthorized' });
                 return;
             }
             const userId = authRequest.user.userId;
 
-            const categoryId = parseInt(req.params.id as string);
+            const expenseId = parseInt(req.params.id as string);
 
-            if (isNaN(categoryId)){
+            if (isNaN(expenseId)){
                 res.status(400).json({ error: 'Invalid expense id' });
                 return;
             }
 
-            const expense = await this.expenseService.getExpenseById(userId, categoryId);
+            const expense = await this.expenseService.getExpenseById(userId, expenseId);
             res.status(200).json({
                 message: 'Successfully retrieved expense',
                 expense: expense
             });
 
         } catch(error: any){
-            console.log('Error retrieving expense', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve expense' });
+            next(error);
         }
     }
 
-    updateExpense = async (req: Request, res: Response): Promise<void> => {
+    updateExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -142,14 +139,14 @@ export class ExpenseController{
             }
             const userId = authRequest.user.userId;
             const { existingCategoryId, vendor, amount, description, expenseDate, month } = req.body;
-            
-            const id = parseInt(req.params.id as string); 
+
+            const id = parseInt(req.params.id as string);
 
             if (isNaN(id)) {
                 res.status(400).json({ error: 'Invalid expense id' });
                 return;
             }
-            
+
             let category;
 
             if (!existingCategoryId){
@@ -162,7 +159,7 @@ export class ExpenseController{
                 res.status(500).json({ error: 'Default category not found' });
                 return;
             }
-            
+
             let categoryId = category.id;
 
             if (!vendor || !amount || !expenseDate) {
@@ -189,25 +186,24 @@ export class ExpenseController{
                 userId,
                 categoryId,
                 vendor,
-                amount, 
+                amount,
                 description,
                 expenseDate,
                 month
             }
 
             const result = await this.expenseService.updateExpense(userId, id, updateExpense);
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Expense updated successfully',
                 expense: result
              })
 
         } catch(error: any){
-            console.log('Error updating expense', error);
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to update expense' });
+            next(error);
         }
     }
 
-    deleteExpense = async (req: Request, res: Response): Promise<void> => {
+    deleteExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -216,22 +212,20 @@ export class ExpenseController{
             }
             const userId = authRequest.user.userId;
             const id = parseInt(req.params.id as string);
-    
+
             if (isNaN(id)){
-                res.status(500).json({ error: 'Invalid expense id' });
+                res.status(400).json({ error: 'Invalid expense id' });
                 return;
             }
-    
+
             await this.expenseService.deleteExpense(userId, id);
             res.status(200).json({ message: 'Expense deleted successfully' });
-        }
-        catch(error: any){
-            console.log('Error deleting expense', error);
-            res.status(error.statusCode || 500).json({ error: error.message || "Failed to delete expense" });
+        } catch(error: any){
+            next(error);
         }
     }
 
-    getMonthlyExpenseSum = async (req: Request, res: Response): Promise<void> => {
+    getMonthlyExpenseSum = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -243,18 +237,17 @@ export class ExpenseController{
             const month = req.query.month as string;
 
             if (!isValidDate(month)){
-                res.status(400).json({ error: 'invalid date format' });
+                res.status(400).json({ error: 'Invalid date format' });
                 return;
             }
 
             const expenseSum = await this.expenseService.getMonthlyExpenseSum(userId, month)
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Successfully retrieved expense total',
                 expenseSum
              })
         } catch(error: any){
-            console.log('Error retrieving expenses', error),
-            res.status(error.statusCode || 500).json({ error: error.message || 'Failed to retrieve expenses' });
+            next(error);
         }
     }
 }

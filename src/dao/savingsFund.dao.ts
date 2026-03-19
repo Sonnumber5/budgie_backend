@@ -9,12 +9,12 @@ export class SavingsFundDAO{
         return result.rows[0];
     }
 
-    async findSavingsFundByName(userId: number, name: string): Promise<SavingsFund>{
+    async findSavingsFundByName(userId: number, name: string): Promise<SavingsFund | null>{
         const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_ACTIVE_SAVINGS_FUND_BY_NAME, [userId, name]);
         return result.rows[0];
     }
 
-    async findSavingsFundById(userId: number, id: number): Promise<SavingsFund>{
+    async findSavingsFundById(userId: number, id: number): Promise<SavingsFund | null>{
         const result = await pool.query<SavingsFund>(SavingsFundQueries.FIND_SAVINGS_FUND_BY_ID, [userId, id]);
         return result.rows[0];
     }

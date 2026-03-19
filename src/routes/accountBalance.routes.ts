@@ -2,7 +2,7 @@ import { AccountBalanceController } from "../controllers/accountBalance.controll
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.authenticate";
 
-export const AccountBalanceRoutes = (accountBalanceController: AccountBalanceController) => {
+export const accountBalanceRoutes = (accountBalanceController: AccountBalanceController) => {
     const router = Router();
 
     router.post('/account-balances', authenticate, accountBalanceController.createAccountBalance);
