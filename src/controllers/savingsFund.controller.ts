@@ -134,9 +134,31 @@ export class SavingsFundController{
                 return;
             }
 
-            const deleted = await this.savingsFundService.deleteSavingsFund(userId, id);
+            await this.savingsFundService.deleteSavingsFund(userId, id);
 
-            res.status(200).json({ message: deleted ? 'Successfully deleted savings fund' : 'Successfully archived savings fund'});
+            res.status(200).json({ message: 'Successfully deleted savings fund'});
+        } catch(error: any){
+            next(error);
+        }
+    }
+
+    archiveSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+
+            if (isNaN(id)){
+                res.status(400).json({ error: 'Invalid savings fund id' });
+                return;
+            }
+
+            const archivedFund = await this.savingsFundService.archiveSavingsFund(userId, id);
+            res.status(200).json({ message: 'Successfully archived savings fund', savingsFund: archivedFund });
         } catch(error: any){
             next(error);
         }

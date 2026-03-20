@@ -10,6 +10,7 @@ export const savingsFundRoutes = (savingsFundController: SavingsFundController) 
     router.get('/savings-funds/:id', authenticate, savingsFundController.getSavingsFundById);
     router.put('/savings-funds/:id', authenticate, savingsFundController.updateSavingsFund);
     router.delete('/savings-funds/:id', authenticate, savingsFundController.deleteSavingsFund);
+    router.patch('/savings-funds/:id/archive', authenticate, savingsFundController.archiveSavingsFund);
     
     return router;
 }

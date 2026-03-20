@@ -45,18 +45,18 @@ export class SavingsFundService{
         return result;
     }
 
-    async deleteSavingsFund(userId: number, id: number): Promise<boolean>{
-        const existingSavingsFund = await this.savingsFundDAO.findSavingsFundById(userId, id);
-        if (!existingSavingsFund){
+    async deleteSavingsFund(userId: number, id: number): Promise<void>{
+        const result = await this.savingsFundDAO.deleteSavingsFund(userId, id);
+        if (!result){
             throw new AppError('Savings fund not found', 404);
         }
-        const hasTransactions = await this.fundTransactionDAO.hasTransactions(userId, id);
-        if (hasTransactions){
-            await this.savingsFundDAO.archiveSavingsFund(userId, id);
-            return false;
-        } else{
-            await this.savingsFundDAO.deleteSavingsFund(userId, id);
-            return true;
+    }
+
+    async archiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
+        const result = await this.savingsFundDAO.archiveSavingsFund(userId, id);
+        if (!result){
+            throw new AppError('Savings fund not found', 404);
         }
+        return result;
     }
 }

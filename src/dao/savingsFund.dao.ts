@@ -34,9 +34,9 @@ export class SavingsFundDAO{
         return result.rows[0];
     }
 
-    async archiveSavingsFund(userId: number, id: number): Promise<boolean>{
+    async archiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
         const result = await pool.query<SavingsFund>(SavingsFundQueries.ARCHIVE_FUND, [new Date(), userId, id]);
-        return result.rowCount !== null && result.rowCount > 0;
+        return result.rows[0];
     }
 
     async deleteSavingsFund(userId: number, id: number): Promise<boolean>{
