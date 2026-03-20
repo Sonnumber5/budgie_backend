@@ -347,7 +347,7 @@ export class FundTransactionController{
             }
 
             const parsedAmount = Number(amount);
-            if (isNaN(parsedAmount) || parsedAmount <= 0){
+            if (isNaN(parsedAmount) || parsedAmount < 0){
                 res.status(400).json({ error: 'amount is required and must be a positive number' });
                 return;
             }
