@@ -7,6 +7,7 @@ export function isValidDate(date: string): boolean{
     return !isNaN(parsed.getTime());
 }
 
+//returns the string format of YYYY-MM-DD
 export function getMonth(incomeDate: string): string {
     const [year, month] = incomeDate.split('-');
     return `${year}-${month}-01`;
