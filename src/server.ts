@@ -35,6 +35,7 @@ import { AccountBalanceDAO } from './dao/accountBalance.dao';
 import { AccountBalanceService } from './services/accountBalance.service';
 import { AccountBalanceController } from './controllers/accountBalance.controller';
 import { accountBalanceRoutes } from './routes/accountBalance.routes';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -49,12 +50,18 @@ app.use(cors({
 app.use(cookieParser());
 
 // Parses JSON request bodies
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 // Parses URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
 // Add security-related HTTP headers
 app.use(helmet());
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { error: 'Too many attempts, please try again later' }
+});
 
 // Dependency injection
 const authDAO = new AuthDAO();
@@ -88,8 +95,17 @@ app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeControlle
 
 // Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    res.status(err.statusCode || 500).json({ error: err.message || 'Internal server error' });
+    if (process.env.NODE_ENV !== 'production') {
+        console.error(err);
+    }
+    const isOperational = err.statusCode && err.statusCode < 500;
+    const message = isOperational
+        ? err.message
+        : 'Internal server error';
+    res.status(err.statusCode || 500).json({ error: message });
 });
+
+app.use('/api/auth', authLimiter, authRoutes(authController));
 
 // Start the Express server
 app.listen(port, () => {

@@ -124,8 +124,8 @@ export class AccountBalanceController{
             }
 
             const parsedBalance = Number(balance);
-            if (!parsedBalance || parsedBalance <= 0){
-                res.status(400).json({ error: 'Balance is required and must be a positive number (even if the account type is a liability)' });
+            if (isNaN(parsedBalance) || parsedBalance < 0){
+                res.status(400).json({ error: 'Balance is required and must be a positive number' });
                 return;
             }
 
