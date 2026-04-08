@@ -90,7 +90,6 @@ const accountBalanceService = new AccountBalanceService(accountBalanceDAO);
 const accountBalanceController = new AccountBalanceController(accountBalanceService);
 
 // Mount routers
-app.use('/api/auth', authRoutes(authController));
 app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController));
 
 // Global error handler
