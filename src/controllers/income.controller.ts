@@ -4,9 +4,11 @@ import { AuthRequest, IncomeDTO } from "../types";
 import { isValidDate, getMonth } from "../utils/date";
 
 
+// Handles HTTP requests for income management operations.
 export class IncomeController{
     constructor(private incomeService: IncomeService){}
 
+    // Validates input and creates a new income record for the authenticated user.
     createIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -61,6 +63,7 @@ export class IncomeController{
 
     }
 
+    // Retrieves all income records for the user, optionally filtered by a month query parameter.
     getIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -93,6 +96,7 @@ export class IncomeController{
         }
     }
 
+    // Retrieves a single income record by its ID for the authenticated user.
     getIncomeById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -118,6 +122,7 @@ export class IncomeController{
         }
     }
 
+    // Validates input and updates an existing income record by its ID.
     updateIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -180,6 +185,7 @@ export class IncomeController{
         }
     }
 
+    // Deletes an income record by its ID for the authenticated user.
     deleteIncome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -204,6 +210,7 @@ export class IncomeController{
         }
     }
 
+    // Returns the total sum of all income for a given month.
     getMonthlyIncomeSum = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

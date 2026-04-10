@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ExpenseController } from "../controllers/expense.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers expense CRUD and totals routes on a new Express router and returns it.
 export const expenseRoutes = (expenseController: ExpenseController) => {
     const router = Router();
 

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types";
 
+// Middleware that verifies the JWT from the request cookie and attaches the decoded user to the request.
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     try{
         const token = req.cookies.token;

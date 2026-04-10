@@ -4,9 +4,11 @@ import { AuthRequest, CategoryBudgetDTO, MonthlyBudgetDTO } from "../types";
 import { isValidDate } from "../utils/date";
 import { CategoryService } from "../services/category.service";
 
+// Handles HTTP requests for monthly budget and category budget operations.
 export class BudgetController{
     constructor(private budgetService: BudgetService, private categoryService: CategoryService){}
 
+    // Validates input and creates a new monthly budget with its category budgets.
     createMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -83,6 +85,7 @@ export class BudgetController{
         }
     }
 
+    // Retrieves a monthly budget and its category budgets by the budget's ID.
     getBudgetByMonthlyBudgetId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -109,6 +112,7 @@ export class BudgetController{
         }
     }
 
+    // Retrieves a monthly budget and its category budgets for a given month query parameter.
     getBudgetByMonth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -140,6 +144,7 @@ export class BudgetController{
         }
     }
 
+    // Validates input and updates an existing monthly budget and its category budgets.
     updateMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -215,6 +220,7 @@ export class BudgetController{
         }
     }
 
+    // Deletes a monthly budget by its ID.
     deleteMonthlyBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -235,6 +241,7 @@ export class BudgetController{
         }
     }
 
+    // Retrieves a single category budget by its ID.
     getCategoryBudgetById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -260,6 +267,7 @@ export class BudgetController{
         }
     }
 
+    // Deletes a category budget and its related expenses by ID.
     deleteCategoryBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -281,6 +289,7 @@ export class BudgetController{
         }
     }
 
+    // Updates the budgeted amount for a category budget by its ID.
     updateCategoryBudget = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

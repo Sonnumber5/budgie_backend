@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers authentication routes (register, login, logout, me) on a new Express router and returns it.
 export const authRoutes = (authController: AuthController) => {
     const router = Router();
     

@@ -2,6 +2,7 @@ import { Router } from "express"
 import { BudgetController } from "../controllers/budget.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers monthly and category budget routes on a new Express router and returns it.
 export const budgetRoutes = (budgetController: BudgetController) => {
     const router = Router();
 

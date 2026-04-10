@@ -2,10 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { CategoryService } from "../services/category.service";
 import { AuthRequest, CategoryDTO } from "../types";
 
+// Handles HTTP requests for category management operations.
 export class CategoryController{
 
     constructor(private categoryService: CategoryService) {}
 
+    // Validates input and creates a new category for the authenticated user.
     createCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -37,6 +39,7 @@ export class CategoryController{
         }
     }
 
+    // Retrieves all categories belonging to the authenticated user.
     getCategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -58,6 +61,7 @@ export class CategoryController{
         }
     }
 
+    // Retrieves a single category by its ID for the authenticated user.
     getCategoryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -84,6 +88,7 @@ export class CategoryController{
         }
     }
 
+    // Validates input and updates the name of an existing category.
     updateCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -121,6 +126,7 @@ export class CategoryController{
         }
     }
 
+    // Deletes a category by its ID for the authenticated user.
     deleteCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

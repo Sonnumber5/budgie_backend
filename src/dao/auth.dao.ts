@@ -4,7 +4,9 @@ import { AuthQueries } from "../queries/auth.queries";
 import { CategoryQueries } from "../queries/category.queries";
 import { AppError } from "../utils/AppError";
 
+// Data access layer for user authentication database operations.
 export class AuthDAO {
+    // Creates a new user and a default "Uncategorized" category in a single transaction.
     async createUser(registerDTO: RegisterDTO): Promise<User>{
         const client = await pool.connect();
         try{
@@ -24,15 +26,17 @@ export class AuthDAO {
         }
     }
 
+    // Returns a user by their ID, or null if not found.
     async findUserById(userId: number): Promise<User | null>{
         const result = await pool.query<User>(AuthQueries.FIND_USER_BY_ID, [userId]);
         return result.rows[0] || null;
     }
 
+    // Returns a user by their email address, or null if not found.
     async findUserByEmail(email: string): Promise<User | null>{
         const result = await pool.query<User>(AuthQueries.FIND_USER_BY_EMAIL, [email]);
         return result.rows[0] || null;
     }
-    
-    
+
+
 }

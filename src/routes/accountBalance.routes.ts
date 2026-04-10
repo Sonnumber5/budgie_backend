@@ -2,6 +2,7 @@ import { AccountBalanceController } from "../controllers/accountBalance.controll
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers account balance CRUD routes on a new Express router and returns it.
 export const accountBalanceRoutes = (accountBalanceController: AccountBalanceController) => {
     const router = Router();
 

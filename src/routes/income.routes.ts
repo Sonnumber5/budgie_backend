@@ -2,6 +2,7 @@ import { IncomeController } from "../controllers/income.controller";
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers income CRUD and totals routes on a new Express router and returns it.
 export const incomeRoutes = (incomeController: IncomeController) => {
     const router = Router();
     

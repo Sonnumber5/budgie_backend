@@ -4,10 +4,12 @@ import { AuthDAO } from '../dao/auth.dao';
 import { RegisterDTO, LoginDTO, AuthResponse } from '../types';
 import { AppError } from '../utils/AppError';
 
+// Business logic layer for user authentication, handling registration, login, and user lookup.
 export class AuthService{
-    
+
     constructor(private authDAO: AuthDAO){}
 
+    // Checks for duplicate emails, hashes the password, and creates a new user.
     async register(registerDTO: RegisterDTO): Promise<{user: {id: number; email: string; name: string}}>{
 
         const existingUser = await this.authDAO.findUserByEmail(registerDTO.email);
@@ -30,6 +32,7 @@ export class AuthService{
         };
     }
 
+    // Verifies credentials and returns a signed JWT along with the user's info.
     async login(loginDTO: LoginDTO): Promise<AuthResponse>{
 
         const user = await this.authDAO.findUserByEmail(loginDTO.email);
@@ -51,7 +54,7 @@ export class AuthService{
             process.env.JWT_SECRET!,
             { expiresIn: '24h'}
         );
-        
+
         return {
             token,
             user: {
@@ -62,6 +65,7 @@ export class AuthService{
         }
     }
 
+    // Returns a user's public info by their ID, throwing 404 if not found.
     async getUserById(userId: number){
         const user = await this.authDAO.findUserById(userId);
         if (!user){

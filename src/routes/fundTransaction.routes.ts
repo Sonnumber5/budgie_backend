@@ -2,6 +2,7 @@ import { FundTransactionController } from "../controllers/fundTransaction.contro
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers savings fund transaction routes (CRUD, transfer, adjustment) on a new Express router and returns it.
 export const fundTransactionRoutes = (fundTransactionController: FundTransactionController) => {
     const router = Router();
     

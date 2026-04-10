@@ -2,6 +2,7 @@ import { Router } from "express"
 import { SavingsFundController } from "../controllers/savingsFund.controller";
 import { authenticate } from "../middleware/auth.authenticate";
 
+// Registers savings fund CRUD and archive routes on a new Express router and returns it.
 export const savingsFundRoutes = (savingsFundController: SavingsFundController) => {
     const router = Router()
 

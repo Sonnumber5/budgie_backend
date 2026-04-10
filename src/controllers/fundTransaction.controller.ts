@@ -3,9 +3,11 @@ import { Request, Response, NextFunction } from "express";
 import { AuthRequest, FundTransactionDTO, TransactionType } from "../types";
 import { isValidDate } from "../utils/date";
 
+// Handles HTTP requests for savings fund transaction operations.
 export class FundTransactionController{
     constructor(private fundTransactionService: FundTransactionService){}
 
+    // Validates input and records a new contribution or expenditure transaction on a savings fund.
     createFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -72,6 +74,7 @@ export class FundTransactionController{
         }
     }
 
+    // Retrieves transactions for a fund, optionally filtered by month.
     getFundTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -108,6 +111,7 @@ export class FundTransactionController{
         }
     }
 
+    // Returns all transactions across every active savings fund for the authenticated user.
     getAllTransactionsForActiveFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -128,6 +132,7 @@ export class FundTransactionController{
         }
     }
 
+    // Returns a single transaction by its ID within a specific fund.
     getFundTransactionById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -159,6 +164,7 @@ export class FundTransactionController{
         }
     }
 
+    // Validates input and updates an existing fund transaction.
     updateFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -232,6 +238,7 @@ export class FundTransactionController{
         }
     }
 
+    // Deletes a specific fund transaction and reverses its effect on the fund balance.
     deleteFundTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -262,6 +269,7 @@ export class FundTransactionController{
         }
     }
 
+    // Transfers an amount from one savings fund to another as a paired transaction.
     transferBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -329,6 +337,7 @@ export class FundTransactionController{
         }
     }
 
+    // Sets a fund's balance to a specific amount and records an adjustment transaction.
     adjustBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -381,6 +390,7 @@ export class FundTransactionController{
         }
     }
 
+    // Returns the total contribution amount across all funds for a given month.
     getContributionSumForMonth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

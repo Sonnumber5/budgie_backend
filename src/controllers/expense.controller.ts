@@ -4,9 +4,11 @@ import { AuthRequest, ExpenseDTO } from "../types";
 import { CategoryService } from "../services/category.service";
 import { getMonth, isValidDate } from "../utils/date";
 
+// Handles HTTP requests for expense management operations.
 export class ExpenseController{
     constructor(private expenseService: ExpenseService, private categoryService: CategoryService){}
 
+    // Validates input and creates a new expense for the authenticated user.
     createExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -74,6 +76,7 @@ export class ExpenseController{
         }
     }
 
+    // Retrieves all expenses for the user, optionally filtered by a month query parameter.
     getExpenses = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -103,6 +106,7 @@ export class ExpenseController{
         }
     }
 
+    // Retrieves a single expense by its ID for the authenticated user.
     getExpenseById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -130,6 +134,7 @@ export class ExpenseController{
         }
     }
 
+    // Validates input and updates an existing expense by its ID.
     updateExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -203,6 +208,7 @@ export class ExpenseController{
         }
     }
 
+    // Deletes an expense by its ID for the authenticated user.
     deleteExpense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -225,6 +231,7 @@ export class ExpenseController{
         }
     }
 
+    // Returns the total sum of all expenses for a given month.
     getMonthlyExpenseSum = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

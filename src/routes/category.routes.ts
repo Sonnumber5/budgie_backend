@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth.authenticate';
 import { CategoryController } from '../controllers/category.controller';
 
+// Registers category CRUD routes on a new Express router and returns it.
 export const categoryRoutes = (categoryController: CategoryController) => {
     const router = Router();
 

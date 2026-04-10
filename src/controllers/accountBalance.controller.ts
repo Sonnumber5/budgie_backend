@@ -3,9 +3,11 @@ import { AccountBalanceDTO, AccountType, AuthRequest } from "../types";
 import { Request, Response, NextFunction } from "express";
 
 
+// Handles HTTP requests for account balance CRUD operations, delegating business logic to AccountBalanceService.
 export class AccountBalanceController{
     constructor(private accountBalanceService: AccountBalanceService){}
 
+    // Validates and creates a new account balance for the authenticated user.
     createAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -50,6 +52,7 @@ export class AccountBalanceController{
         }
     }
 
+    // Returns all account balances belonging to the authenticated user.
     getAccountBalances = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -70,6 +73,7 @@ export class AccountBalanceController{
         }
     }
 
+    // Returns a single account balance by ID, scoped to the authenticated user.
     getAccountBalanceById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -96,6 +100,7 @@ export class AccountBalanceController{
         }
     }
 
+    // Validates and updates an existing account balance for the authenticated user.
     updateAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -146,6 +151,7 @@ export class AccountBalanceController{
         }
     }
 
+    // Deletes a specific account balance by ID for the authenticated user.
     deleteAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -169,6 +175,7 @@ export class AccountBalanceController{
         }
     }
 
+    // Resets all account balances for the authenticated user back to zero.
     resetAccountBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;

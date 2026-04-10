@@ -2,10 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 import { AuthRequest, LoginDTO, RegisterDTO } from "../types";
 
+// Handles HTTP requests for user authentication operations.
 export class AuthController{
 
     constructor(private authService: AuthService){}
 
+    // Validates registration input and creates a new user account.
     register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const { email, password, name } = req.body;
@@ -62,6 +64,7 @@ export class AuthController{
         }
     }
 
+    // Validates login credentials and sets a JWT in an HTTP-only cookie on success.
     login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const {email, password} = req.body;
@@ -93,11 +96,13 @@ export class AuthController{
         }
     }
 
+    // Clears the authentication cookie to log the user out.
     logout = (_req: Request, res: Response): void => {
         res.clearCookie('token');
         res.json({ message: 'Logout successful' });
     }
 
+    // Returns the currently authenticated user's information from the request.
     me = async (req: Request, res: Response): Promise<void> => {
         const user = (req as AuthRequest).user;
         res.json({ user });

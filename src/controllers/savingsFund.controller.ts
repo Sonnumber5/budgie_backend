@@ -2,9 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { SavingsFundService } from "../services/savingsFund.service";
 import { AuthRequest, SavingsFundDTO } from "../types";
 
+// Handles HTTP requests for savings fund CRUD and archive operations.
 export class SavingsFundController{
     constructor (private savingsFundService: SavingsFundService){}
 
+    // Validates input and creates a new savings fund for the authenticated user.
     createSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -39,6 +41,7 @@ export class SavingsFundController{
         }
     }
 
+    // Returns a single savings fund by its ID for the authenticated user.
     getSavingsFundById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -63,6 +66,7 @@ export class SavingsFundController{
         }
     }
 
+    // Returns all savings funds for the user, optionally including archived ones.
     getSavingsFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -84,6 +88,7 @@ export class SavingsFundController{
         }
     }
 
+    // Validates input and updates the name and goal of an existing savings fund.
     updateSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -119,6 +124,7 @@ export class SavingsFundController{
         }
     }
 
+    // Permanently deletes a savings fund by its ID for the authenticated user.
     deleteSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
@@ -142,6 +148,7 @@ export class SavingsFundController{
         }
     }
 
+    // Marks a savings fund as archived rather than deleting it.
     archiveSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
