@@ -19,8 +19,13 @@ export class BudgetController{
             const userId = authRequest.user.userId;
             const { month, expectedIncome, categoryBudgetDTOs } = req.body;
 
-            if (!expectedIncome || !month){
-                res.status(400).json({ error: 'Expected income and month are required' });
+            if (!expectedIncome){
+                res.status(400).json({ error: 'Expected income is required' });
+                return;
+            }
+
+            if (!month){
+                res.status(400).json({ error: 'Month is required' });
                 return;
             }
 

@@ -18,7 +18,7 @@ export class IncomeController{
             }
             const userId = authRequest.user.userId;
 
-            const { amount, source, description, incomeDate } = req.body;
+            const { amount, source, description, incomeDate, month } = req.body;
 
             if (!amount || !source){
                 res.status(400).json({ error: 'Amount and source are required' });
@@ -27,6 +27,11 @@ export class IncomeController{
 
             if (!incomeDate){
                 res.status(400).json({ error: 'Income date is required' });
+                return;
+            }
+
+            if (!month){
+                res.status(400).json({ error: 'Month is required' });
                 return;
             }
 
@@ -39,8 +44,6 @@ export class IncomeController{
                 res.status(400).json({ error: 'Amount must be a positive number' });
                 return;
             }
-
-            const month = getMonth(incomeDate);
 
             const incomeDTO: IncomeDTO = {
                 userId,
