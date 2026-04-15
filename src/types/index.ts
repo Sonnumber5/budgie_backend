@@ -123,6 +123,45 @@ export interface MonthlyBudgetDTO{
 }
 
 
+//---------DEFAULT BUDGETS---------//
+
+export interface DefaultBudget{
+    id: number,
+    expectedIncome: number, 
+    defaultCategoryBudgets: DefaultCategoryBudget[],
+    createdAt: string,
+    updatedAt: string
+}
+
+export interface DefaultCategoryBudget{
+    id: number,
+    defaultBudgetId: number,
+    categoryId: number,
+    categoryName: string,
+    budgetedAmount: number,
+    createdAt: string,
+    updatedAt: string
+}
+
+//---------DEFAULT CATEGORY BUDGETS---------//
+
+export interface DefaultBudgetDTO{
+    id?: number, 
+    userId: number,
+    expectedIncome: number,
+    defaultCategoryBudgetDTOs: DefaultCategoryBudgetDTO[],
+}
+
+export interface DefaultCategoryBudgetDTO{
+    id?: number,
+    userId: number,
+    defaultBudgetId?: number,
+    categoryId: number,
+    categoryName?: string,
+    budgetedAmount: number
+}
+
+
 //---------CATEGORY BUDGET---------//
 
 export interface CategoryBudget{
