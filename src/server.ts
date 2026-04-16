@@ -36,6 +36,10 @@ import { AccountBalanceService } from './services/accountBalance.service';
 import { AccountBalanceController } from './controllers/accountBalance.controller';
 import { accountBalanceRoutes } from './routes/accountBalance.routes';
 import rateLimit from 'express-rate-limit';
+import { DefaultBudgetController } from './controllers/defaultBudget.controller';
+import { DefaultBudgetDAO } from './dao/defaultBudget.dao';
+import { DefaultBudgetService } from './services/defaultBudget.service';
+import { defaultBudgetRoutes } from './routes/defaultBudget.routes';
 
 dotenv.config();
 
@@ -88,9 +92,12 @@ const savingsFundController = new SavingsFundController(savingsFundService);
 const accountBalanceDAO = new AccountBalanceDAO();
 const accountBalanceService = new AccountBalanceService(accountBalanceDAO);
 const accountBalanceController = new AccountBalanceController(accountBalanceService);
+const defaultBudgetDAO = new DefaultBudgetDAO();
+const defaultBudgetService = new DefaultBudgetService(defaultBudgetDAO);
+const defaultBudgetController = new DefaultBudgetController(defaultBudgetService, categoryService);
 
 // Mount routers
-app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController));
+app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController), defaultBudgetRoutes(defaultBudgetController));
 
 // Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
