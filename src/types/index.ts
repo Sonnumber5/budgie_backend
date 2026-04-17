@@ -133,6 +133,15 @@ export interface DefaultBudget{
     updatedAt: string
 }
 
+export interface DefaultBudgetDTO{
+    id?: number, 
+    userId: number,
+    expectedIncome: number,
+    defaultCategoryBudgetDTOs: DefaultCategoryBudgetDTO[],
+}
+
+//---------DEFAULT CATEGORY BUDGETS---------//
+
 export interface DefaultCategoryBudget{
     id: number,
     defaultBudgetId: number,
@@ -141,15 +150,6 @@ export interface DefaultCategoryBudget{
     budgetedAmount: number,
     createdAt: string,
     updatedAt: string
-}
-
-//---------DEFAULT CATEGORY BUDGETS---------//
-
-export interface DefaultBudgetDTO{
-    id?: number, 
-    userId: number,
-    expectedIncome: number,
-    defaultCategoryBudgetDTOs: DefaultCategoryBudgetDTO[],
 }
 
 export interface DefaultCategoryBudgetDTO{

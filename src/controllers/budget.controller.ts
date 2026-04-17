@@ -194,10 +194,11 @@ export class BudgetController{
                         res.status(400).json({ error: 'Budgeted amount must be a positive number' });
                         return;
                     }
-
+                    
                     const category = await this.categoryService.getOrCreateCategory(userId, categoryBudget.categoryName);
 
                     const newCategoryBudgetDTO: CategoryBudgetDTO = {
+                        id: categoryBudget.id,
                         userId,
                         monthlyBudgetId: id,
                         categoryId: category.id,
