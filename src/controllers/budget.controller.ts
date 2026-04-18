@@ -53,7 +53,7 @@ export class BudgetController{
 
             for (const categoryBudget of categoryBudgetDTOs){
                 if (!categoryBudget.categoryName || categoryBudget.budgetedAmount === undefined){
-                    res.status(400).json({ error: 'Each category budget must have categoryName and budgetedAmount' });
+                    res.status(400).json({ error: 'Each category budget must have name and a budgeted amount' });
                     return;
                 }
 
@@ -70,6 +70,7 @@ export class BudgetController{
                     budgetedAmount: categoryBudget.budgetedAmount
                 };
                 newCategoryBudgetDTOs.push(newCategoryBudgetDTO);
+                console.log("new category budget", newCategoryBudgetDTO);
             }
 
             const monthlyBudgetToAdd: MonthlyBudgetDTO = {

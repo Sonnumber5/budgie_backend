@@ -17,16 +17,17 @@ export class BudgetDAO{
             const id = monthlyBudgetToCreate.rows[0].id;
             const month = monthlyBudgetToCreate.rows[0].month;
             const expectedIncome = monthlyBudgetToCreate.rows[0].expectedIncome;
-            let categoryBudgets: CategoryBudget[] = [];
             const createdAt = monthlyBudgetToCreate.rows[0].createdAt;
             const updatedAt = monthlyBudgetToCreate.rows[0].updatedAt;
 
             const categoryBudgetsDTOs = monthlyBudgetDTO.categoryBudgetDTOs;
             for (let i = 0; i < categoryBudgetsDTOs.length; i++) {
                 const current = categoryBudgetsDTOs[i];
-                const newCategoryBudget = await client.query<CategoryBudget>(BudgetQueries.CREATE_CATEGORY_BUDGET, [id, current.categoryId, current.budgetedAmount]);
-                categoryBudgets.push(newCategoryBudget.rows[0])
+                await client.query<CategoryBudget>(BudgetQueries.CREATE_CATEGORY_BUDGET, [id, current.categoryId, current.budgetedAmount]);
             }
+            
+            const allCategoryBudgets = await client.query<CategoryBudget>(BudgetQueries.FIND_CATEGORY_BUDGETS_BY_MONTHLY_BUDGET_ID, [monthlyBudgetDTO.userId, id]);
+            const categoryBudgets = allCategoryBudgets.rows;
 
             const newMonthlyBudget: MonthlyBudget = {
                 id,
