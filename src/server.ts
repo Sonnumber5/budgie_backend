@@ -99,6 +99,8 @@ const defaultBudgetController = new DefaultBudgetController(defaultBudgetService
 // Mount routers
 app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController), defaultBudgetRoutes(defaultBudgetController));
 
+app.use('/api/auth', authLimiter, authRoutes(authController));
+
 // Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     if (process.env.NODE_ENV !== 'production') {
@@ -110,8 +112,6 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
         : 'Internal server error';
     res.status(err.statusCode || 500).json({ error: message });
 });
-
-app.use('/api/auth', authLimiter, authRoutes(authController));
 
 // Start the Express server
 app.listen(port, () => {
