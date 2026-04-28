@@ -38,6 +38,12 @@ export class FundTransactionDAO{
         return result.rows;
     }
 
+    // Returns all transaction rows across all active funds for the user for a given month.
+    async findMonthlyTransactionsForActiveFunds(userId: number, month: string): Promise<FundTransaction[]>{
+        const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_MONTHLY_TRANSACTIONS_FOR_ACTIVE_FUNDS, [userId, month]);
+        return result.rows;
+    }
+
     // Returns a single transaction row by its ID within a specific fund.
     async findFundTransactionById(userId: number, id: number, savingsFundId: number): Promise<FundTransaction>{
         const result = await pool.query<FundTransaction>(FundTransactionQueries.FIND_FUND_TRANSACTION_BY_ID, [userId, id, savingsFundId]);

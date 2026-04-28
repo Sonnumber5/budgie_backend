@@ -98,6 +98,7 @@ export class FundTransactionController{
                     return
                 }
                 transactionArr = await this.fundTransactionService.getFundTransactionsByMonth(userId, fundId, month);
+                console.log("THIS WAS CALLED")
             } else {
                 transactionArr = await this.fundTransactionService.getFundTransactions(userId, fundId);
             }
@@ -112,7 +113,7 @@ export class FundTransactionController{
     }
 
     // Returns all transactions across every active savings fund for the authenticated user.
-    getAllTransactionsForActiveFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getTransactionsForActiveFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -120,12 +121,20 @@ export class FundTransactionController{
                 return;
             }
             const userId = authRequest.user.userId;
-
-            const allTransactions = await this.fundTransactionService.getAllTransactionsForActiveFunds(userId);
+            const month = req.query.month;
+            let transactions;
+            
+            if (typeof(month) === 'string'){
+                if (isValidDate(month)){
+                    transactions = await this.fundTransactionService.getMonthlyTransactionsForActiveFunds(userId, month);
+                }
+            } else{
+                transactions = await this.fundTransactionService.getAllTransactionsForActiveFunds(userId);
+            }
 
             res.status(200).json({
-                message: 'Successfully retrieved transactions',
-                activeFundTransactions: allTransactions
+                message: `Successfully retrieved transactions for ${month}`,
+                activeFundTransactions: transactions
             });
         } catch(error: any){
             next(error);
