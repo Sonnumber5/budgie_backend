@@ -33,13 +33,13 @@ export class FundTransactionService{
     }
 
     // Returns all transactions across every active savings fund for the user.
-    async getAllTransactionsForActiveFunds(userId: number): Promise<FundTransaction[]>{
-        return await this.fundTransactionDAO.findAllTransactionsForActiveFunds(userId);
+    async getAllTransactions(userId: number): Promise<FundTransaction[]>{
+        return await this.fundTransactionDAO.findAllTransactions(userId);
     }
 
     // Returns all  transactions across every active savings fund for the user for a given month.
-    async getMonthlyTransactionsForActiveFunds(userId: number, month: string): Promise<FundTransaction[]>{
-        return await this.fundTransactionDAO.findMonthlyTransactionsForActiveFunds(userId, month);
+    async getMonthlyTransactions(userId: number, month: string): Promise<FundTransaction[]>{
+        return await this.fundTransactionDAO.findMonthlyTransactions(userId, month);
     }
 
     // Returns transactions for a fund filtered by month, throwing 404 if the fund doesn't exist.

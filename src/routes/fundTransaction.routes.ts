@@ -9,7 +9,7 @@ export const fundTransactionRoutes = (fundTransactionController: FundTransaction
     router.get('/savings-funds/contributions', authenticate, fundTransactionController.getContributionSumForMonth);
     router.post('/savings-funds/:fundId/transactions', authenticate, fundTransactionController.createFundTransaction);
     router.get('/savings-funds/:fundId/transactions', authenticate, fundTransactionController.getFundTransactions);
-    router.get('/savings-funds/transactions', authenticate, fundTransactionController.getTransactionsForActiveFunds);
+    router.get('/savings-funds/transactions', authenticate, fundTransactionController.getTransactions);
     router.get('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundTransactionController.getFundTransactionById);
     router.put('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundTransactionController.updateFundTransaction);
     router.delete('/savings-funds/:fundId/transactions/:transactionId', authenticate, fundTransactionController.deleteFundTransaction);

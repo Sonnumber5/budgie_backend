@@ -8,12 +8,12 @@ export const FundTransactionQueries = {
     WHERE user_id = $1 AND savings_fund_id = $2
     ORDER BY transaction_date DESC`,
     
-    FIND_ALL_TRANSACTIONS_FOR_ACTIVE_FUNDS: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
+    FIND_ALL_TRANSACTIONS: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
     FROM savings_fund_transactions 
     WHERE user_id = $1
     ORDER BY transaction_date DESC`,
 
-    FIND_MONTHLY_TRANSACTIONS_FOR_ACTIVE_FUNDS: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
+    FIND_MONTHLY_TRANSACTIONS: `SELECT id, savings_fund_id AS "savingsFundId", transaction_type AS "transactionType", amount, description, transaction_date AS "transactionDate", month, created_at AS "createdAt"
     FROM savings_fund_transactions 
     WHERE user_id = $1 AND month = $2
     ORDER BY transaction_date DESC`,

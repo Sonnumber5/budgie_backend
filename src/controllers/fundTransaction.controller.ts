@@ -113,7 +113,7 @@ export class FundTransactionController{
     }
 
     // Returns all transactions across every active savings fund for the authenticated user.
-    getTransactionsForActiveFunds = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try{
             const authRequest = req as AuthRequest;
             if (!authRequest.user){
@@ -126,10 +126,10 @@ export class FundTransactionController{
             
             if (typeof(month) === 'string'){
                 if (isValidDate(month)){
-                    transactions = await this.fundTransactionService.getMonthlyTransactionsForActiveFunds(userId, month);
+                    transactions = await this.fundTransactionService.getMonthlyTransactions(userId, month);
                 }
             } else{
-                transactions = await this.fundTransactionService.getAllTransactionsForActiveFunds(userId);
+                transactions = await this.fundTransactionService.getAllTransactions(userId);
             }
 
             res.status(200).json({
