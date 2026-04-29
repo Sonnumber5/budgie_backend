@@ -25,9 +25,9 @@ export class SavingsFundService{
         return result;
     }
 
-    // Returns all savings funds for the user, including archived ones if requested.
-    async getSavingsFunds(userId: number, includeArchived: boolean): Promise<SavingsFund[]>{
-        if (includeArchived === true){
+    // Returns either active or archived savings funds
+    async getSavingsFunds(userId: number, onlyArchived: boolean): Promise<SavingsFund[]>{
+        if (onlyArchived === true){
             return await this.savingsFundDAO.findArchivedSavingsFunds(userId);
         } else{
             return await this.savingsFundDAO.findActiveSavingsFunds(userId);
@@ -61,6 +61,15 @@ export class SavingsFundService{
     // Marks a savings fund as archived, throwing 404 if not found.
     async archiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
         const result = await this.savingsFundDAO.archiveSavingsFund(userId, id);
+        if (!result){
+            throw new AppError('Savings fund not found', 404);
+        }
+        return result;
+    }
+
+    // Unarchives an archived savings fund, throwing 404 if not found.
+    async unarchiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
+        const result = await this.savingsFundDAO.unarchiveSavingsFund(userId, id);
         if (!result){
             throw new AppError('Savings fund not found', 404);
         }

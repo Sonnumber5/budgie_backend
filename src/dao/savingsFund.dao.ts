@@ -43,7 +43,13 @@ export class SavingsFundDAO{
 
     // Sets the archived_at timestamp on a savings fund and returns the updated record.
     async archiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
-        const result = await pool.query<SavingsFund>(SavingsFundQueries.ARCHIVE_FUND, [new Date(), userId, id]);
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.ARCHIVE_FUND, [userId, id]);
+        return result.rows[0];
+    }
+
+    // Removes the archived_at timestamp on a savings fund and returns the updated record.
+    async unarchiveSavingsFund(userId: number, id: number): Promise<SavingsFund>{
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.UNARCHIVE_FUND, [userId, id]);
         return result.rows[0];
     }
 

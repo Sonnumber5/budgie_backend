@@ -75,9 +75,9 @@ export class SavingsFundController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const includeArchived = req.query.includeArchived === "true";
+            const onlyArchived = req.query.onlyArchived === "true";
 
-            const result = await this.savingsFundService.getSavingsFunds(userId, includeArchived);
+            const result = await this.savingsFundService.getSavingsFunds(userId, onlyArchived);
 
             res.status(200).json({
                 message: 'Successfully retrieved savings funds',
@@ -166,6 +166,29 @@ export class SavingsFundController{
 
             const archivedFund = await this.savingsFundService.archiveSavingsFund(userId, id);
             res.status(200).json({ message: 'Successfully archived savings fund', savingsFund: archivedFund });
+        } catch(error: any){
+            next(error);
+        }
+    }
+
+    // Unarchives an archived savings fund
+    unarchiveSavingsFund = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try{
+            const authRequest = req as AuthRequest;
+            if (!authRequest.user){
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const userId = authRequest.user.userId;
+            const id = parseInt(req.params.id as string);
+
+            if (isNaN(id)){
+                res.status(400).json({ error: 'Invalid savings fund id' });
+                return;
+            }
+
+            const unarchivedFund = await this.savingsFundService.unarchiveSavingsFund(userId, id);
+            res.status(200).json({ message: 'Successfully unarchived savings fund', savingsFund: unarchivedFund });
         } catch(error: any){
             next(error);
         }
