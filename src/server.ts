@@ -47,7 +47,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'https://budgie-frontend-1532de54d6a4.herokuapp.com/',
+    origin: process.env.CORS_ORIGIN || 'https://budgie-frontend-1532de54d6a4.herokuapp.com',
     credentials: true
 }));
 
