@@ -44,10 +44,10 @@ import { defaultBudgetRoutes } from './routes/defaultBudget.routes';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
 }));
 
@@ -114,6 +114,6 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 // Start the Express server
-app.listen(port, () => {
+app.listen(Number(port), () => {
     console.log(`budgie_API listening at http://localhost:${port}`);
 });
