@@ -99,7 +99,12 @@ export class AuthController{
 
     // Clears the authentication cookie to log the user out.
     logout = (_req: Request, res: Response): void => {
-        res.clearCookie('token');
+        const isProd = process.env.NODE_ENV === 'production';
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
+        });
         res.json({ message: 'Logout successful' });
     }
 
