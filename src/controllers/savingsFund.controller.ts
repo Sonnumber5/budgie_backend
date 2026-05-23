@@ -15,7 +15,7 @@ export class SavingsFundController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { name, goal } = req.body;
+            const { name, goal, icon } = req.body;
 
             if (!name){
                 res.status(400).json({ error: 'name is required' });
@@ -29,8 +29,10 @@ export class SavingsFundController{
             }
             const fundToAdd: SavingsFundDTO = {
                 name,
-                goal
+                goal,
+                icon
             }
+            
             const result = await this.savingsFundService.createSavingsFund(userId, fundToAdd);
             res.status(201).json({
                 message: 'Successfully created savings fund',
@@ -97,7 +99,7 @@ export class SavingsFundController{
                 return;
             }
             const userId = authRequest.user.userId;
-            const { name, goal } = req.body;
+            const { name, goal, icon } = req.body;
             const id = parseInt(req.params.id as string);
 
             if (!name){
@@ -112,7 +114,8 @@ export class SavingsFundController{
             const fundToUpdate: SavingsFundDTO = {
                 id,
                 name,
-                goal
+                goal,
+                icon
             }
             const result = await this.savingsFundService.updateSavingsFund(userId, fundToUpdate);
             res.status(200).json({

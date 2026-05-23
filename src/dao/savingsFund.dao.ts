@@ -7,7 +7,7 @@ import { AppError } from "../utils/AppError";
 export class SavingsFundDAO{
     // Inserts a new savings fund row and returns the created record.
     async createSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
-        const result = await pool.query<SavingsFund>(SavingsFundQueries.CREATE_SAVINGS_FUND, [userId, savingsFundDTO.name, savingsFundDTO.goal]);
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.CREATE_SAVINGS_FUND, [userId, savingsFundDTO.name, savingsFundDTO.goal, savingsFundDTO.icon]);
         return result.rows[0];
     }
 
@@ -37,7 +37,7 @@ export class SavingsFundDAO{
 
     // Updates a savings fund's name and goal and returns the updated record.
     async updateSavingsFund(userId: number, savingsFundDTO: SavingsFundDTO): Promise<SavingsFund>{
-        const result = await pool.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND, [savingsFundDTO.name, savingsFundDTO.goal, userId, savingsFundDTO.id]);
+        const result = await pool.query<SavingsFund>(SavingsFundQueries.UPDATE_SAVINGS_FUND, [savingsFundDTO.name, savingsFundDTO.goal, savingsFundDTO.icon, userId, savingsFundDTO.id]);
         return result.rows[0];
     }
 
