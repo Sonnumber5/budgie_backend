@@ -41,7 +41,11 @@ import { DefaultBudgetDAO } from './dao/defaultBudget.dao';
 import { DefaultBudgetService } from './services/defaultBudget.service';
 import { defaultBudgetRoutes } from './routes/defaultBudget.routes';
 
+require("./instrument.js");
+
 dotenv.config();
+
+const Sentry = require("@sentry/node");
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -100,6 +104,8 @@ const defaultBudgetController = new DefaultBudgetController(defaultBudgetService
 app.use('/api', categoryRoutes(categoryController), incomeRoutes(incomeController), expenseRoutes(expenseController), budgetRoutes(budgetController), fundTransactionRoutes(fundTransactionController), savingsFundRoutes(savingsFundController), accountBalanceRoutes(accountBalanceController), defaultBudgetRoutes(defaultBudgetController));
 
 app.use('/api/auth', authLimiter, authRoutes(authController));
+
+Sentry.setupExpressErrorHandler(app);
 
 // Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
