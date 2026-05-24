@@ -1,3 +1,4 @@
+import "./instrument";  
 import dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
@@ -40,12 +41,9 @@ import { DefaultBudgetController } from './controllers/defaultBudget.controller'
 import { DefaultBudgetDAO } from './dao/defaultBudget.dao';
 import { DefaultBudgetService } from './services/defaultBudget.service';
 import { defaultBudgetRoutes } from './routes/defaultBudget.routes';
-
-require("./instrument.js");
+import * as Sentry from '@sentry/node';
 
 dotenv.config();
-
-const Sentry = require("@sentry/node");
 
 const app = express();
 const port = process.env.PORT || 3001;
