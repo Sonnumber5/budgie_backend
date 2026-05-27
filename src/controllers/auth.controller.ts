@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 import { AuthRequest, LoginDTO, RegisterDTO } from "../types";
-import { AppError } from "../utils/AppError";
 
 // Handles HTTP requests for user authentication operations.
 export class AuthController{
@@ -85,7 +84,7 @@ export class AuthController{
             res.cookie('token', result.token, {
                 httpOnly: true,
                 secure: isProd,
-                sameSite: isProd ? 'none' : 'lax',
+                sameSite: 'lax',
                 maxAge: 24 * 60 * 60 * 1000
             });
 
@@ -104,10 +103,9 @@ export class AuthController{
         res.clearCookie('token', {
             httpOnly: true,
             secure: isProd,
-            sameSite: isProd ? 'none' : 'lax',
+            sameSite: 'lax',
         });
         res.json({ message: 'Logout successful' });
-            throw new AppError('THIS IS A TEST ERROR', 401);
     }
 
     // Returns the currently authenticated user's information from the request.
