@@ -1,4 +1,4 @@
-# Budgie — Backend API
+e# Budgie — Backend API
 
 A RESTful API for the Budgie personal finance application. Built with **Node.js**, **Express**, and **TypeScript**, backed by a **PostgreSQL** database.
 
@@ -26,11 +26,9 @@ A RESTful API for the Budgie personal finance application. Built with **Node.js*
 | Runtime | Node.js ≥ 18 |
 | Framework | Express 5 |
 | Language | TypeScript 5 |
-| Database | PostgreSQL (via `pg`) |
+| Database | PostgreSQL |
 | Authentication | JWT + HTTP-only cookies |
 | Password Hashing | bcrypt |
-| Validation | Joi |
-| Logging | Winston |
 | Error Tracking | Sentry |
 | Security Headers | Helmet |
 | Rate Limiting | express-rate-limit |
@@ -47,7 +45,7 @@ budgie_backend/
 │   ├── dao/              # Database access objects
 │   ├── routes/           # Express router definitions
 │   ├── middleware/       # Auth middleware
-│   ├── queries/          # SQL query strings
+│   ├── queries/          # SQL queries
 │   ├── types/            # TypeScript type definitions
 │   ├── utils/            # Shared utilities
 │   ├── database.ts       # PostgreSQL connection pool
@@ -113,14 +111,11 @@ JWT_SECRET=your_secret_key_here
 # CORS — set to your frontend origin
 CORS_ORIGIN=http://localhost:5173
 ```
-
-> **Never commit your `.env` file.** It contains credentials and your JWT signing secret.
-
 ---
 
 ## Running the Server
 
-### Development (with hot reload)
+### Development
 
 ```bash
 npm run dev
@@ -289,7 +284,6 @@ In production (`NODE_ENV=production`), the cookie is flagged `Secure` and will o
 
 | Feature | Implementation |
 |---|---|
-| Security headers | `helmet` sets `X-Content-Type-Options`, `X-Frame-Options`, CSP, and more |
 | Rate limiting | Auth endpoints are limited to 50 requests / 15 min per IP |
 | CORS | Restricted to the origin specified by `CORS_ORIGIN` |
 | Password hashing | `bcrypt` with salt rounds |
